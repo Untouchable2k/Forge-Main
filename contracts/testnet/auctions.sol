@@ -229,6 +229,8 @@ contract ProofOfWork{
     //event transferFrom2(address a, address _member, uint value);
     event Withdrawal(address indexed caller, address indexed member, uint era, uint day, uint value, uint vetherRemaining);
     //ProofofWorkStuff
+    
+    event MegaWithdrawal(address indexed caller, address indexed member, uint era, uint TotalDays, uint256 stricttotal);
     uint256 starttime = 0;
     uint256 public lastepoch = 0;
     uint256 public blocktime = 36 * 60; //36 min blocks in ProofOfWork
@@ -475,8 +477,46 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         }  
         return value;
     }
+
+
+    function GetMultipleEz(uint _era, address _member) public
+    {
+        uint[] memory dd; 
+        for(uint x=1; x< uint(currentDay); x++)
+        {
+            dd[x] = x;
+        }
+        getMultipleWithdrawls(_era, dd, _member);
+    }
+
+    function getMultipleWithdrawls(uint _era, uint[] memory fdays, address _member) public returns (bool success)
+    {
+    uint256 stricttotal = 0;
+    for(uint256 x = 0; x < fdays.length; x++)
+    {
+        stricttotal = stricttotal.add( _processWithdrawalRETURNSVAL (_era, fdays[x], _member) );
+    }
+    stricttotal = stricttotal * 4;
+    IERC20(rewardTokenContract).transfer(_member, stricttotal);
+    emit MegaWithdrawal(msg.sender, _member, _era, fdays.length, stricttotal);
     
-    
+    return true;
+}
+    function _processWithdrawalRETURNSVAL (uint _era, uint256 _day, address _member) private returns (uint256 value) {
+        uint memberUnits = mapEraDay_MemberUnits[_era][_day][_member];                      // Get Member Units
+        if (memberUnits == 0) { 
+            value = 0;                                                                      // Do nothing if 0 (prevents revert)
+        } else {
+            value = getEmissionShare(_era, _day, _member);                                  // Get the emission Share for Member
+            mapEraDay_MemberUnits[_era][_day][_member] = 0;                                 // Set to 0 since it will be withdrawn
+            mapEraDay_UnitsRemaining[_era][_day] = mapEraDay_UnitsRemaining[_era][_day].sub(memberUnits);  // Decrement Member Units
+            mapEraDay_EmissionRemaining[_era][_day] = mapEraDay_EmissionRemaining[_era][_day].sub(value);  // Decrement emission
+            totalEmitted += value;
+
+            //We emit all in one transfer.   
+        }
+        return value*4;
+    }
     function _processWithdrawal (uint _era, uint _day, address _member) private returns (uint value) {
         uint memberUnits = mapEraDay_MemberUnits[_era][_day][_member];                      // Get Member Units
         if (memberUnits == 0) { 
