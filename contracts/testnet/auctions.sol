@@ -186,6 +186,7 @@ contract ProofOfWork{
     uint256 public extraGas;
     bool runonce = false;
     uint256 oneEthUnit = 1000000000000000000; 
+    uint256 one0xBTCUnit =         100000000;
     string public name; string public symbol; address public rewardTokenContract;
     uint public decimals;
 
@@ -402,7 +403,7 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         require((startingday + daystobid) < daysPerEra, "WE ONLY HAVE SO MANY DAYS");
         require(startingday >= currentDay, "Must not bid behind the days");
         require(era >= currentEra, "no knucklehead");
-        require((amtTotal/daystobid) > (oneEthUnit/(era)/3), "0.333 0xBitcoin per Day required, sendmore");
+        require((amtTotal/daystobid) > (one0xBTCUnit/(era)/3), "0.333 0xBitcoin per Day required, sendmore");
         require(IERC20(ZeroXBTCAddress).transferFrom(msg.sender, burnAddress, amtTotal), "NO WAY");
         uint256 amt = amtTotal/daystobid;
         for(uint256 x=startingday; x< (startingday + daystobid); x++)
