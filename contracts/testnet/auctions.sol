@@ -237,9 +237,6 @@ contract ProofOfWork{
 
     //testing//
 
-    uint256 public bug1=0;
-    address public bug2;
-    address public bug3;
     // Constructor
     constructor () public {
         upgradeHeight = 1; 
@@ -247,7 +244,7 @@ contract ProofOfWork{
         coin = 10**decimals; 
         genesis = block.timestamp; emission = 2048*coin;
         currentEra = 1; currentDay = upgradeHeight; 
-        daysPerEra = 600; secondsPerDay = 30; // MUST REMOVE 30 AND KEEP -> 60*60*24*3; //   = 155,520,000 seconds per era = 5 years 3 day auctions
+        daysPerEra = 600; secondsPerDay = 60*60*24*3; 
         totalBurnt = 0; totalFees = 0;
         totalEmitted = (upgradeHeight-1)*emission;
         burnAddress = 0x0111011001100001011011000111010101100101; deployer = msg.sender;
@@ -429,18 +426,6 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         _recordBurn(msg.sender, member, currentEra, currentDay, amt);
             
 }
-/*
-    function burnFANTOMForMember(address member) public payable requestGas(extraGas)  {
-        
-        address payable receive21r = payable(burnAddress);
-        
-        receive21r.call{value:msg.value}("");
-        //receive21r.send(msg.value);
-        
-        _recordBurn(msg.sender, member, currentEra, currentDay, msg.value);
-            
-}
-*/
     
     
     // Internal - Withdrawal function
