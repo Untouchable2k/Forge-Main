@@ -1,7 +1,16 @@
-//LP Contract for 0xPW
-//SPDX-License-Identifier: MIT
+// Forge Stake Contract
+// Recieves 25% or 10,500,000 Forge Tokens from the ForgeMining Contract over 100+ years.
+// Also recieve 33% of the 0xBitcoin Tokens from the ForgeMining Contract over forever.
 
-// File: @openzeppelin/contracts/ownership/Ownable.sol
+
+// What we are staking:  Forge/0xBitcoin Liquidity Pool Tokens
+//What is it?  It is the pool traders use to buy and sell the coin
+//The larger the pool, the larger the order the token can handle
+
+//
+//Rewards: Forge, 0xBitcoin, and ETH currently.
+// Funds gathered will be dispered over 21 days. 21 Day reward period
+//Room to Expand to two other cryptocurrencies(only admin in everything! This feature will be decentralized)
 
 pragma solidity ^0.8.7;
 
