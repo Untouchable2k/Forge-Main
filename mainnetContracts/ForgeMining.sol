@@ -466,6 +466,7 @@ function FREEmintDivRound(uint256 _nonce, bytes32 _challenge_digest, address _mi
         if(totalOwned > 0)
 		{
             IERC20(ExtraFunds4).transfer(msg.sender, totalOwned);
+        }
     }
 	return true;
 }
