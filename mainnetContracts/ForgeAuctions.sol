@@ -1,7 +1,7 @@
 //  Forge Auctions Contract
 //   Auctions 8,192 tokens every 3 days and users are able to withdraw anytime after!
 
-//   All proceeds of auctions go back into the miners pockets, by going directly to the Proof of Work Contract!
+//   Proceeds of auctions go back into the miners pockets, by going directly to the Proof of Work Contract!
 
 // 10,500,000 tokens are Auctioned off over 100 years in this contract! In the first era ~5,000,000 are auctioned and half every era after!
 
