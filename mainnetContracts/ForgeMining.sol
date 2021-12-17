@@ -199,8 +199,8 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     uint256 public oldecount = 0;
     uint256 oneEthUnit =    1000000000000000000;
     uint256 one8unit   =              100000000;
-    uint256 public Token2Per=           3000000;
-    uint256 public Token3Min=           3000000;
+    uint256 public Token2Per=         100000000;
+    uint256 public Token3Min=         100000000;
     mapping(bytes32 => bytes32) solutionForChallenge;
     uint public tokensMinted;
     mapping(address => uint) balances;
@@ -260,13 +260,13 @@ function initFirst() external onlyOwner{
 
 function ARewardSender() public {
 
-    //runs every _BLOCKS_PER_READJUSTMENT / 2
+    //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     tokensMinted.add(reward_amount * epochsPast);
     reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
     
     balances[LPRewardAddress] = balances[LPRewardAddress].add((reward_amount * (epochsPast)) / 2);
-    if(IERC20(ZeroXBTCAddress).balanceOf(address(this)) > 4 * Token2Per * (_BLOCKS_PER_READJUSTMENT/2)) // at least enough blocks to rerun this function for both LPRewards and Users
+    if(IERC20(ZeroXBTCAddress).balanceOf(address(this)) > 4 * Token2Per * (_BLOCKS_PER_READJUSTMENT/4)) // at least enough blocks to rerun this function for both LPRewards and Users
     {
         give0xBTC = true;
         IERC20(ZeroXBTCAddress).transfer(LPRewardAddress, ((epochsPast) * Token2Per)/2);
@@ -494,7 +494,7 @@ function _startNewMiningEpoch() public {
       epochCount = epochCount.add(1);
 
       //every so often, readjust difficulty. Dont readjust when deploying
-    if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 2) == 0)
+    if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 4) == 0)
     {
         ARewardSender();
 		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
