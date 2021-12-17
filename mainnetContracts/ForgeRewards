@@ -1,4 +1,4 @@
-// Forge Stake Contract
+// Forge Rewards Contract
 // Recieves 25% or 10,500,000 Forge Tokens from the ForgeMining Contract over 100+ years.
 // Also recieve 33% of the 0xBitcoin Tokens from the ForgeMining Contract over forever.
 
@@ -136,7 +136,7 @@ contract StakedTokenWrapper {
     }
 }
 
-contract NyanRewards is StakedTokenWrapper, Ownable {
+contract ForgeRewards is StakedTokenWrapper, Ownable {
     uint256 public decimalsExtra=18;
     uint256 public decimalsExtraExtra=18;
     uint64 public poolLength = 60 * 60 * 24 * 21; //21 Day rewards periods
