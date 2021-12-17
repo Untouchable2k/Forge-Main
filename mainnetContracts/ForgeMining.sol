@@ -265,8 +265,8 @@ function ARewardSender() public {
     tokensMinted.add(reward_amount * epochsPast);
     reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
     
-    balances[LPRewardAddress] = balances[LPRewardAddress].add((reward_amount * (epochsPast)) / 2);
-    if(IERC20(ZeroXBTCAddress).balanceOf(address(this)) > 4 * Token2Per * (_BLOCKS_PER_READJUSTMENT/4)) // at least enough blocks to rerun this function for both LPRewards and Users
+    balances[LPRewardAddress] = balances[LPRewardAddress].add((reward_amount * epochsPast) / 2);
+    if(IERC20(ZeroXBTCAddress).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
     {
         give0xBTC = true;
         IERC20(ZeroXBTCAddress).transfer(LPRewardAddress, ((epochsPast) * Token2Per)/2);
