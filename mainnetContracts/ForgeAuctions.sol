@@ -171,11 +171,11 @@ contract GasPump {
     }
 }
 
-contract ProofOfWork{
+contract ForgeMining{
     function getEpoch() public view returns (uint) {}
     }
 
-  contract Auctions is  GasPump, IERC20, Ownabled
+  contract ForgeAuctions is  GasPump, IERC20, Ownabled
 {
     using SafeMath for uint;
     using ExtendedMath for uint;
@@ -212,7 +212,7 @@ contract ProofOfWork{
     mapping(uint=>mapping(uint=>mapping(address=>uint))) public mapEraDay_MemberUnits;      // Era,Days,Member->Units
     mapping(address=>mapping(uint=>uint[])) public mapMemberEra_Days;                       // Member,Era->Days[]
     mapping(address=>bool) public mapAddress_Excluded;     
-    ProofOfWork pow;
+    ForgeMining public ForgeMiningToken;
     // fee whitelist
     mapping(address => bool) public whitelistFrom;
     mapping(address => bool) public whitelistTo;
@@ -232,7 +232,6 @@ contract ProofOfWork{
     uint256 starttime = 0;
     uint256 public lastepoch = 0;
     uint256 public blocktime = 36 * 60; //36 min blocks in ProofOfWork
-    uint256 public epochPer3Day = 60 * 60 * 24 * 3 / (blocktime); //120 blocks per auction
     //=====================================CREATION=========================================//
 
     //testing//
@@ -308,15 +307,15 @@ contract ProofOfWork{
         owner22 = address(0);
         lastepoch =  0;
         ZeroXBTCAddress = _ZeroXBTCAddress;
-        pow = ProofOfWork(token);
-        lastepoch = pow.getEpoch();
+        ForgeMiningToken = ForgeMining(token);
+        lastepoch = ForgeMiningToken.getEpoch();
         starttime = block.timestamp;
 
     }
 
 
     function changeAuctionTime() internal {
-        uint256 epoch = pow.getEpoch();
+        uint256 epoch = ForgeMiningToken.getEpoch();
         uint256 daysLeft = daysPerEra - currentDay;
         if(daysLeft > 0)
         {
