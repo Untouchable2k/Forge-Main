@@ -1,11 +1,11 @@
 // Forge - Proof of Work Mining Contract
-// Distrubtion of Token is as follows
-// 25% of Token is Auctioned - Distributes tokens to users who use Fantom to buy tokens in fair price. auctions that last 4 days. Using the Auctions contract
+// Distrubtion of Forge Token is as follows:
+// 25% of Forge Token is Auctioned in the ForgeAuctions Contract which distributes tokens to users who use Fantom to buy tokens in fair price. auctions that last 4 days. Using the Auctions contract
 // +
-// 25% of Token is distributed as Liquidiy Pool rewards - Distributes tokens to users who deposit the SpiritSwap Liquidity Pool tokens into the LPRewards contract.
+// 25% of Forge Token is distributed as Liquidiy Pool rewards in the ForgeRewards Contract which distributes tokens to users who deposit the SpiritSwap Liquidity Pool tokens into the LPRewards contract.
 // +
-// 50% of Token is distributed using Proof-of-Work - Distributes tokens to users by using GPUs/FPGAs to solve a complicated problem to gain tokens!
-
+// 50% of Forge Token is distributed using ForgeMining Contract(this Contract) which distributes tokens to users by using GPUs/FPGAs to solve a complicated problem to gain tokens!
+//
 // = 100% Of the Token is distributed to the users! No dev fee or premine!
 //
 // All distributions happen fairly using Bitcoins model of distribution for over 100+ years, on-chain, decentralized, trustless, ownerless contracts!
@@ -466,7 +466,6 @@ function FREEmintDivRound(uint256 _nonce, bytes32 _challenge_digest, address _mi
         if(totalOwned > 0)
 		{
             IERC20(ExtraFunds4).transfer(msg.sender, totalOwned);
-        }
     }
 	return true;
 }
