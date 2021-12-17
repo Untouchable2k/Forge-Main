@@ -130,15 +130,7 @@ contract StakedTokenWrapper {
 contract NyanRewards is StakedTokenWrapper, Ownable {
     uint256 public decimalsExtra=18;
     uint256 public decimalsExtraExtra=18;
-    uint64 public poolLength = 90; //90 seconds for now
-    uint256 public bug1;
-    uint256 public bug2;
-    uint256 public bug3;
-    uint256 public bug4;
-    uint256 public bug5;
-    uint256 public bug6;
-    uint256 public bug7;
-    uint256 public bug0;
+    uint64 public poolLength = 60 * 60 * 24 * 21; //21 Day rewards periods
     uint256 public totalRewarded;
     uint256 public totalRewarded2;
     uint256 public totalRewarded3;
@@ -200,13 +192,22 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
     mapping(address => UserRewardsExtraExtra) public userRewardsExtraExtra;
 
     event RewardAdded(uint256 reward);
-    event RewardPaid(address indexed user, uint256 reward, uint256 rewards2);
+    event RewardPaid(address indexed user, uint256 reward, uint256 rewards2, uint256 rewards3, uint256 rewardsExtra, uint256 rewardsExtraExtra);
+    event RewardPaidBasic(address indexed user, uint256 reward, uint256 rewards2);
 
     event RewardAdded2(uint256 rewards2);
     event RewardPaid2(address indexed user2, uint256 rewards2);
 
     event RewardAdded3(uint256 rewards3);
     event RewardPaid3(address indexed user3, uint256 rewards3);
+
+    
+    event RewardAdded4(uint256 rewards4);
+    event RewardPaid4(address indexed user3, uint256 rewards3);
+
+    
+    event RewardAdded5(uint256 rewards5);
+    event RewardPaid5(address indexed user3, uint256 rewards3);
 
     event RewardAddedExtra(uint256 rewardsExtra);
     event RewardPaidExtra(address indexed userExtra, uint256 rewardsExtra);
@@ -411,7 +412,43 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
         getReward();
         withdraw(uint128(balanceOf(msg.sender)));
     }
+    function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
+        uint256 reward = earned(msg.sender);
+        uint256 reward2 = earned2(msg.sender);
+        if(choice == 0)
+        {
+            if (reward > 0) {
+            userRewards[msg.sender].rewards = 0;
+            require(rewardToken.transfer(msg.sender, reward), "reward transfer failed");
+            totalRewarded = totalRewarded - reward;
+            }
+            if(reward2 > 0)
+            {
+                userRewards2[msg.sender].rewards2 = 0;
+                require(rewardToken2.transfer(msg.sender, reward2), "reward token 2 transfer failed");
+                totalRewarded2 = totalRewarded2 - reward2;
+            }
+        }
+        if(choice == 1)
+        {
+        if(reward2 > 0)
+        {
+            userRewards2[msg.sender].rewards2 = 0;
+            require(rewardToken2.transfer(msg.sender, reward2), "reward token 2 transfer failed");
+            totalRewarded2 = totalRewarded2 - reward2;
+        }
+        if(choice == 2){
+            if (reward > 0) {
+            userRewards[msg.sender].rewards = 0;
+            require(rewardToken.transfer(msg.sender, reward), "reward transfer failed");
+            totalRewarded = totalRewarded - reward;
+        }
+        }
+        }
+        emit RewardPaidBasic(msg.sender, reward, reward2);
+    }
 
+ 
     function getReward() public updateReward(msg.sender) {
         uint256 reward = earned(msg.sender);
         uint256 reward2 = earned2(msg.sender);
@@ -434,10 +471,25 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
             require(rewardToken2.transfer(msg.sender, reward2), "reward token 2 transfer failed");
             totalRewarded2 = totalRewarded2 - reward2;
         }
+        uint256 rewardExtra = earnedExtra(msg.sender);
+        if (rewardExtra > 0) {
+            userRewardsExtra[msg.sender].rewardsExtra = 0;
+            require(rewardTokenExtra.transfer(msg.sender, rewardExtra), "reward transfer failed");
+            totalRewardedExtra = totalRewardedExtra - rewardExtra;
+        }
         
-            emit RewardPaid(msg.sender, reward, reward2);
+        uint256 rewardExtraExtra = earnedExtraExtra(msg.sender);
+        if(rewardExtraExtra > 0)
+        {
+            
+            userRewardsExtraExtra[msg.sender].rewardsExtraExtra = 0;
+            require(rewardTokenExtraExtra.transfer(msg.sender, rewardExtraExtra), "reward token 2 transfer failed");
+            totalRewardedExtra = totalRewardedExtraExtra - rewardExtraExtra;
+        }
+        
+            emit RewardPaid(msg.sender, reward, reward2, reward3, rewardExtra, rewardExtraExtra);
     }
-
+ 
 
     function getRewardExtra() public updateReward(msg.sender) {
         uint256 rewardExtra = earnedExtra(msg.sender);
@@ -487,17 +539,11 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
                 rewardRateExtraExtra = 0;
             }
             reward = maxRewardSupply;
-            bug1 = totalSupply;
-            bug0 = rewardRate;
-            bug6 = remaining;
-            bug2 = reward;
-            bug4 = maxRewardSupply;
-            bug5 = totalRewarded;
 
             lastUpdateTimeExtraExtra = blockTimestamp;
             periodFinishExtraExtra = blockTimestamp+duration;
             totalRewardedExtraExtra = reward + totalRewarded;
-            emit RewardAdded(reward);
+            emit RewardAdded5(reward);
         }
     }
 
@@ -524,17 +570,11 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
                 rewardRateExtra = 0;
             }
             reward = maxRewardSupply;
-            bug1 = totalSupply;
-            bug0 = rewardRate;
-            bug6 = remaining;
-            bug2 = reward;
-            bug4 = maxRewardSupply;
-            bug5 = totalRewarded;
 
             lastUpdateTimeExtra = blockTimestamp;
             periodFinishExtra = blockTimestamp+duration;
             totalRewardedExtra = reward + totalRewarded;
-            emit RewardAdded(reward);
+            emit RewardAdded4(reward);
         }
     }
 
@@ -542,12 +582,26 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
 
 
 
+    function setRewardParamsALL(uint choice) external {
+
+            this.setRewardParamsForge(2, 22);
+            this.setRewardParams0xBTC(2, 22);
+            this.setRewardParamsETH(2, 22);
+
+        if(choice == 1)
+        {
+            this.setRewardParamsExtra(3, 33);
+        }
+        if(choice == 2){
+            this.setRewardParamsExtraExtra(3, 33);
+            this.setRewardParamsExtra(3, 33);
+        }
+    }
 
 
 
 
-
-    function setRewardParams0xPW(uint256 reward, uint64 duration) external {
+    function setRewardParamsForge(uint256 reward, uint64 duration) external {
         unchecked {
             require(reward > 0);
             duration = poolLength;  // Updates every 14 days
@@ -567,14 +621,8 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
             else{
                 rewardRate = 0;
             }
+            
             reward = maxRewardSupply;
-            bug1 = totalSupply;
-            bug0 = rewardRate;
-            bug6 = remaining;
-            bug2 = reward;
-            bug4 = maxRewardSupply;
-            bug5 = totalRewarded;
-
             lastUpdateTime = blockTimestamp;
             periodFinish = blockTimestamp+duration;
             totalRewarded = reward + totalRewarded;
@@ -603,14 +651,6 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
                 rewardRate2 = 0;
             }
             reward = maxRewardSupply2;
-            bug1 = totalSupply;
-            bug0 = rewardRate2;
-            bug6 = remaining;
-            bug2 = reward;
-            bug3 = maxRewardSupply2;
-            bug4 = maxRewardSupply2;
-            bug5 = totalRewarded2;
-
             lastUpdateTime2 = blockTimestamp;
             periodFinish2 = blockTimestamp+duration;
             totalRewarded2 = reward + totalRewarded2;
@@ -641,14 +681,6 @@ contract NyanRewards is StakedTokenWrapper, Ownable {
                 rewardRate3 = 0;
             }
             reward = maxRewardSupply3;
-            bug1 = totalSupply;
-            bug0 = rewardRate;
-            bug6 = remaining;
-            bug2 = reward;
-            bug3 = maxRewardSupply3;
-            bug4 = maxRewardSupply3;
-            bug5 = totalRewarded3;
-
             lastUpdateTime3 = blockTimestamp;
             periodFinish3 = blockTimestamp+duration;
             totalRewarded3 = reward + totalRewarded3;
