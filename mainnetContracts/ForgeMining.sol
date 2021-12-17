@@ -22,15 +22,16 @@
 //   =
 // 21,000,000 Mined over 100+ years using Bitcoins Distrubtion halvings every 4 years. Uses Proof-oF-Work to distribute the tokens. Public Miner is available.  Uses this contract.
 //   +
-// 10,500,000 Auctioned over 100+ years into 4 day auctions split fairly among all buyers. ALL Fantom proceeds go into THIS contract which it fairly distributes to miners.  Uses the Auctions contract
+// 10,500,000 Auctioned over 100+ years into 4 day auctions split fairly among all buyers. ALL 0xBitcoin proceeds go into THIS contract which it fairly distributes to miners.  Uses the ForgeAuctions contract
 //   +
-// 10,500,000 tokens goes to Liquidity Providers of the token over 100+ year using Bitcoins distribution!  Helps prevent LP losses!  Uses the LPRewards Contract
+// 10,500,000 tokens goes to Liquidity Providers of the token over 100+ year using Bitcoins distribution!  Helps prevent LP losses!  Uses the ForgeRewards Contract
 //
 //  =
 //
 // 42,000,001 Tokens is the MAX Supply EVER.  Will never be more!
 //      
-// 100% of the 0xBitcoin Token from this contract goes to the Miner to pay for the transaction cost and if the token grows enough earn Fantom per mint!!
+// 66% of the 0xBitcoin Token from this contract goes to the Miner to pay for the transaction cost and if the token grows enough earn 0xBitcoin per mint!!
+// 33% of the 0xBitcoin TOken from this contract goes to the Liquidity Providers via ForgeRewards Contract.  Helps prevent Impermant Loss! Larger Liquidity!
 //
 // No premine, dev cut, or advantage taken at launch. Public miner available at launch.  100% of the token is given away fairly over 100+ years using Bitcoins model!
 //
