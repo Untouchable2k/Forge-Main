@@ -256,26 +256,16 @@ function initFirst() external onlyOwner{
         
     }
     
-//MUST REMOVEFREEMINT
-function AnotherMinerFirst() external {
-    
-        // Init contract variables and mint 1 token to anyone
-    balances[msg.sender] = 100000000;
-    emit Transfer(address(0), msg.sender, 100000000);
-    epochCount += 1200;
-
-
-}
 
 function ARewardSender() public {
 
-    //runs every _BLOCKS_PER_READJUSTMENT / 10
+    //runs every _BLOCKS_PER_READJUSTMENT / 2
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     tokensMinted.add(reward_amount * epochsPast);
     reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
     
     balances[LPRewardAddress] = balances[LPRewardAddress].add((reward_amount * (epochsPast)) / 2);
-    if(IERC20(ZeroXBTCAddress).balanceOf(address(this)) > 4 * Token2Per * (_BLOCKS_PER_READJUSTMENT/10)) // at least enough blocks to rerun this function for both LPRewards and Users
+    if(IERC20(ZeroXBTCAddress).balanceOf(address(this)) > 4 * Token2Per * (_BLOCKS_PER_READJUSTMENT/2)) // at least enough blocks to rerun this function for both LPRewards and Users
     {
         give0xBTC = true;
         IERC20(ZeroXBTCAddress).transfer(LPRewardAddress, ((epochsPast) * Token2Per)/2);
@@ -287,60 +277,8 @@ function ARewardSender() public {
 
 
     oldecount = epochCount; //actually epoch
-    
 }
 
-function AOpenMint(bool nonce, bool challenge_digest) public returns (bool success) {
-
-            //set readonly diagnostics data
-
-             _startNewMiningEpoch();
-            balances[msg.sender] = balances[msg.sender].add(reward_amount);
-            
-            //mintEthBalance = address(this).balance;    
-                    
-            if(give0xBTC)
-            {
-	    	if(givedouble)
-		{
-			IERC20(ZeroXBTCAddress).transfer(msg.sender, Token2Per*2);
-		}
-		else
-		{
-		
-			IERC20(ZeroXBTCAddress).transfer(msg.sender, Token2Per);
-		}
-            }
-            emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
-           return true;
-    }
-
-function AOpenMint2(bool nonce, bool challenge_digest) public returns (bool success) {
-
-
-            //set readonly diagnostics data
-
-             _startNewMiningEpoch();
-            balances[msg.sender] = balances[msg.sender].add(reward_amount);
-            
-            //mintEthBalance = address(this).balance;       
-        
-            if(give0xBTC)
-            {
-	    	    if(givedouble)
-	          	{
-		          	IERC20(ZeroXBTCAddress).transfer(msg.sender, Token2Per*2);
-	        	}
-	        	else
-	        	{
-		
-	        		IERC20(ZeroXBTCAddress).transfer(msg.sender, Token2Per);
-	        	}
-            }
-            emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
-           return true;
-    }
-	
 
 function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
 
@@ -469,7 +407,10 @@ function mintNewsPaperToken(uint256 nonce, bytes32 challenge_digest, address Ext
     {
         uint256 totalOwned = IERC20(ExtraFunds5).balanceOf(address(this));
         totalOwned = (totalOwned).divRound(10000);  //10000 was chosen to give each token a ~1 year distribution using Proof-of-Work
-        IERC20(ExtraFunds5).transfer(msg.sender, totalOwned);
+        if(totalOwned > 0)
+		{
+         IERC20(ExtraFunds5).transfer(msg.sender, totalOwned);
+        }
     }
     return true;
 }
@@ -522,7 +463,10 @@ function FREEmintDivRound(uint256 _nonce, bytes32 _challenge_digest, address _mi
 	{
 	    uint256 totalOwned = IERC20(ExtraFunds4).balanceOf(address(this));
         totalOwned = (totalOwned).divRound(10000);  //10000 was chosen to give each token a ~1 year distribution using Proof-of-Work
-        IERC20(ExtraFunds4).transfer(msg.sender, totalOwned);
+        if(totalOwned > 0)
+		{
+            IERC20(ExtraFunds4).transfer(msg.sender, totalOwned);
+        }
     }
 	return true;
 }
@@ -549,7 +493,7 @@ function _startNewMiningEpoch() public {
       epochCount = epochCount.add(1);
 
       //every so often, readjust difficulty. Dont readjust when deploying
-    if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 10) == 0)
+    if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 2) == 0)
     {
         ARewardSender();
 		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
