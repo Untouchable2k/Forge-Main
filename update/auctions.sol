@@ -214,6 +214,7 @@ contract ForgeMining{
     mapping(uint=>mapping(uint=>mapping(address=>uint))) public mapEraDay_MemberUnits;      // Era,Days,Member->Units
     mapping(address=>mapping(uint=>uint[])) public mapMemberEra_Days;                       // Member,Era->Days[]
     mapping(address=>bool) public mapAddress_Excluded;     
+    mapping(address=>uint) public mapMember_DayClaimedTo;      // Era,Days,Member->Units
     ForgeMining public ForgeMiningToken;
     // fee whitelist
     mapping(address => bool) public whitelistFrom;
@@ -376,7 +377,7 @@ contract ForgeMining{
 /*
 function WIthdrawls for a previous day, all holders with over _percent starting at spot startdig(usually 0), and maxdig incase list grows large, Spots are the number to payout
 good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spots=20, _percent=100% (meaning anyone with 1% of the pot gets rewards)
-*/
+
 
 
 
@@ -411,9 +412,52 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         return true;
     }
 
+*/
+    function FutureBurn0xBTCForMember(address member, uint256 total) public returns (bool success)
+    {
+        uint256 daysleft = daysPerEra - currentDay - 1 ;//just incase
+        require(FutureBurn0xBTCForMember(currentEra, member, daysleft, total), "");
+    }
 
+    function FutureBurn0xBTCForMember(uint _era, address _member, uint totalNumberrOfDays, uint256 amountTotal) public returns (bool success)
+    {
+        uint[] memory dd = new uint[](totalNumberrOfDays); 
+        uint[] memory amt = new uint[](totalNumberrOfDays); 
+        uint y=0;
+        for(uint x=currentDay; x< (currentDay+totalNumberrOfDays); x++)
+        {
+            dd[y-1] = x;
+            amt[y-1] = amountTotal/totalNumberrOfDays;
+            y++;
+        }
+        FutureBurn0xBTC(_era, dd, _member, amt);
+    
+        return true;
+    }
 
+    function FutureBurn0xBTC(uint _era, uint[] memory fdays, address _member, uint256[] memory amount) public returns (bool success)
+    {
+        uint256 stricttotal =0;
+        uint256 _daysPerEra=daysPerEra;
+        uint _currentDay = currentDay;
+        uint _currentEra = currentEra; 
+        require(_era >= currentEra, "no knucklehead only bid on this era");
+    for(uint256 x = 0; x < fdays.length; x++)
+    {
+        uint256 dayamt = amount[x];
+        if(_era == _currentEra)
+        {
+            require(fdays[x] >= _currentDay, "Must not bid behind the days");
+        }
+        require(fdays[x] <= _daysPerEra, "Cant bid on days not in era");
+        stricttotal = stricttotal.add(dayamt);
+         _recordBurn(msg.sender, _member, _era, fdays[x], dayamt);
+    }
+        require((stricttotal/fdays.length) >  (one0xBTCUnit/(_era)/10), "0.1 0xBitcoin per Day required, reduces every era");
+        require(IERC20(ZeroXBTCAddress).transferFrom(msg.sender, burnAddress, stricttotal), "NO OTHER WAY, send it the required 0xBitcoin");
 
+        return true;
+    }
     function burn0xBTCForMember(address member, uint256 amt) public  {
 
         
@@ -478,17 +522,24 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
     }
 
 
-    function GetMultipleEz(uint _era, address _member) public
+    function WithdrawEz(uint _era, address _member) public
     {
-        uint[] memory dd = new uint[](currentDay-1); 
-        for(uint x=1; x< currentDay; x++)
+        uint startingday = mapMember_DayClaimedTo[_member] ;
+        if(startingday == 0)
+        {
+            startingday = 1;
+        }
+        
+        uint[] memory dd = new uint[](currentDay-startingday); 
+        for(uint x=startingday; x< currentDay; x++)
         {
             dd[x-1] = x;
         }
-        getMultipleWithdrawls(_era, dd, _member);
+        WithdrawlsDays(_era, dd, _member);
+        mapMember_DayClaimedTo[_member] = currentDay;
     }
 
-    function getMultipleWithdrawls(uint _era, uint[] memory fdays, address _member) public returns (bool success)
+    function WithdrawlsDays(uint _era, uint[] memory fdays, address _member) public returns (bool success)
     {
     uint256 stricttotal = 0;
     for(uint256 x = 0; x < fdays.length; x++)
@@ -500,6 +551,7 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
     
     return true;
 }
+
     function _processWithdrawalRETURNSVAL (uint _era, uint256 _day, address _member) private returns (uint256 value) {
         uint memberUnits = mapEraDay_MemberUnits[_era][_day][_member];                      // Get Member Units
         if (memberUnits == 0) { 
