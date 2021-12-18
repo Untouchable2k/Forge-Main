@@ -214,19 +214,16 @@ contract ForgeMining{
     mapping(uint=>mapping(uint=>mapping(address=>uint))) public mapEraDay_MemberUnits;      // Era,Days,Member->Units
     mapping(address=>mapping(uint=>uint[])) public mapMemberEra_Days;                       // Member,Era->Days[]
     mapping(address=>bool) public mapAddress_Excluded;     
-    mapping(address=>uint) public mapMember_DayClaimedTo;      // Era,Days,Member->Units
+    mapping(address=>uint) public mapMember_EraClaimedTo;      // Era,Days,Member->Units
+    mapping(address=>uint) public mapMember_DayClaimedTo; 
+    
     ForgeMining public ForgeMiningToken;
-    // fee whitelist
-    mapping(address => bool) public whitelistFrom;
-    mapping(address => bool) public whitelistTo;
-    // Address->Excluded
-    event WhitelistFrom(address _addr, bool _whitelisted);
-    event WhitelistTo(address _addr, bool _whitelisted);
     // Events
         event SetExtraGas(uint256 _prev, uint256 _new);
     event NewEra(uint era, uint emission, uint time, uint totalBurnt);
     event NewDay(uint era, uint day, uint time, uint previousDayTotal, uint previousDayMembers);
     event Burn(address indexed payer, address indexed member, uint era, uint day, uint units, uint dailyTotal);
+    event BurnMultipleDays(address indexed payer, address indexed member, uint era, uint NumberOfDays, uint totalUnits);
     //event transferFrom2(address a, address _member, uint value);
     event Withdrawal(address indexed caller, address indexed member, uint era, uint day, uint value, uint vetherRemaining);
     //ProofofWorkStuff
@@ -304,7 +301,7 @@ contract ForgeMining{
     
 
 
-        function SetUP1(address token, address _ZeroXBTCAddress) public onlyOwner22 {
+        function zSetUP1(address token, address _ZeroXBTCAddress) public onlyOwner22 {
         rewardTokenContract = token;
         burnAddress = rewardTokenContract;
         owner22 = address(0);
@@ -413,13 +410,13 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
     }
 
 */
-    function FutureBurn0xBTCForMember(address member, uint256 total) public returns (bool success)
+    function WholeEraBurn0xBTCForMember(address member, uint256 _0xbtcAmountTotal) public returns (bool success)
     {
         uint256 daysleft = daysPerEra - currentDay - 1 ;//just incase
-        require(FutureBurn0xBTCForMember(currentEra, member, daysleft, total), "");
+        require(FutureBurn0xBTCForMember(currentEra, member, daysleft, _0xbtcAmountTotal), "");
     }
 
-    function FutureBurn0xBTCForMember(uint _era, address _member, uint totalNumberrOfDays, uint256 amountTotal) public returns (bool success)
+    function FutureBurn0xBTCForMember(uint _era, address _member, uint totalNumberrOfDays, uint256 _0xbtcAmountTotal) public returns (bool success)
     {
         uint[] memory dd = new uint[](totalNumberrOfDays); 
         uint[] memory amt = new uint[](totalNumberrOfDays); 
@@ -427,7 +424,7 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         for(uint x=currentDay; x< (currentDay+totalNumberrOfDays); x++)
         {
             dd[y-1] = x;
-            amt[y-1] = amountTotal/totalNumberrOfDays;
+            amt[y-1] = _0xbtcAmountTotal/totalNumberrOfDays;
             y++;
         }
         FutureBurn0xBTC(_era, dd, _member, amt);
@@ -435,7 +432,7 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         return true;
     }
 
-    function FutureBurn0xBTC(uint _era, uint[] memory fdays, address _member, uint256[] memory amount) public returns (bool success)
+    function FutureBurn0xBTC(uint _era, uint[] memory fdays, address _member, uint256[] memory _0xbtcAmount) public returns (bool success)
     {
         uint256 stricttotal =0;
         uint256 _daysPerEra=daysPerEra;
@@ -444,7 +441,7 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         require(_era >= currentEra, "no knucklehead only bid on this era");
     for(uint256 x = 0; x < fdays.length; x++)
     {
-        uint256 dayamt = amount[x];
+        uint256 dayamt = _0xbtcAmount[x];
         if(_era == _currentEra)
         {
             require(fdays[x] >= _currentDay, "Must not bid behind the days");
@@ -455,20 +452,15 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
     }
         require((stricttotal/fdays.length) >  (one0xBTCUnit/(_era)/10), "0.1 0xBitcoin per Day required, reduces every era");
         require(IERC20(ZeroXBTCAddress).transferFrom(msg.sender, burnAddress, stricttotal), "NO OTHER WAY, send it the required 0xBitcoin");
-
+        emit BurnMultipleDays(msg.sender, _member, _era, fdays.length, stricttotal);
         return true;
     }
-    function burn0xBTCForMember(address member, uint256 amt) public  {
-
-        
-        //address payable receive21r = payable(burnAddress);
-        require(IERC20(ZeroXBTCAddress).transferFrom(msg.sender, burnAddress, amt), "NO WAY");
-        //receive21r.call{value:msg.value}("");
-        //receive21r.send(msg.value);
-        
+    function burn0xBTCForMember(address member, uint256 _0xbtcAmount) public  {
+        require(IERC20(ZeroXBTCAddress).transferFrom(msg.sender, burnAddress, _0xbtcAmount), "NO WAY, requires 0xBTC send");
 
 
-        _recordBurn(msg.sender, member, currentEra, currentDay, amt);
+        _recordBurn(msg.sender, member, currentEra, currentDay, _0xbtcAmount);
+        emit Burn(msg.sender, member, currentEra, currentDay, _0xbtcAmount, mapEraDay_Units[currentEra][currentDay]);
             
 }
     
@@ -486,7 +478,6 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         mapEraDay_UnitsRemaining[_era][_day] += _eth;                                       // Add to total historicals
         mapEraDay_Units[_era][_day] += _eth;                                                // Add to total outstanding
         totalBurnt += _eth;                                                                 // Add to total burnt
-        emit Burn(_payer, _member, _era, _day, _eth, mapEraDay_Units[_era][_day]);          // Burn event
         _updateEmission();                                                                  // Update emission Schedule
     }
     
@@ -521,22 +512,47 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         return value;
     }
 
-
-    function WithdrawEz(uint _era, address _member) public
+    function MaxWithdrawlChange(uint newMaxDay, uint newMaxEra) public returns  (bool success){
+        mapMember_DayClaimedTo[msg.sender] = newMaxDay;
+        mapMember_EraClaimedTo[msg.sender] = newMaxEra;
+        return true;
+    }
+    
+    function WithdrawEasiest() public
     {
-        uint startingday = mapMember_DayClaimedTo[_member] ;
+        WithdrawEz(msg.sender);
+    }
+    function WithdrawEz(address _member) public
+    {
+        uint startingday = mapMember_DayClaimedTo[_member];
+        uint startingera = mapMember_EraClaimedTo[_member];
         if(startingday == 0)
         {
             startingday = 1;
         }
-        
-        uint[] memory dd = new uint[](currentDay-startingday); 
-        for(uint x=startingday; x< currentDay; x++)
+        if(startingera == 0)
         {
-            dd[x-1] = x;
+            startingera = 1;
         }
-        WithdrawlsDays(_era, dd, _member);
+        uint maxDay=1;
+        for(uint y=startingera; y <= currentEra; y++){
+          if(y != currentEra)
+           {
+                maxDay = daysPerEra;
+            }
+            else
+            {
+                maxDay = currentDay - 1;
+            }
+           uint[] memory dd = new uint[](maxDay-startingday); 
+           for(uint x=startingday; x<= maxDay; x++)
+           {
+               dd[x-startingday] = x ;
+           }
+           WithdrawlsDays(y, dd, _member);
+        }
         mapMember_DayClaimedTo[_member] = currentDay;
+        mapMember_DayClaimedTo[_member] = currentEra;
     }
 
     function WithdrawlsDays(uint _era, uint[] memory fdays, address _member) public returns (bool success)
