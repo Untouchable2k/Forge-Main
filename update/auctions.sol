@@ -26,7 +26,7 @@ contract Ownabled {
         require(msg.sender == owner22, "only owner");
         _;
     }
-    function setOwner22(address _owner22) external onlyOwner22 {
+    function setOwner(address _owner22) internal onlyOwner22 {
         emit TransferOwnership(owner22, _owner22);
         owner22 = _owner22;
     }
@@ -140,7 +140,6 @@ interface IERC20 {
      *
      * Note that `value` may be zero.
      */
-    event Transfer(address indexed from, address indexed to, uint256 value);
 
     /**
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
@@ -175,19 +174,19 @@ contract ForgeMining{
     function getEpoch() public view returns (uint) {}
     }
 
-  contract ForgeAuctions is  GasPump, IERC20, Ownabled
+  contract ForgeAuctions is  GasPump, Ownabled
 {
 
-    uint[] public bug1;
     using SafeMath for uint;
     using ExtendedMath for uint;
-    address public ZeroXBTCAddress;
+    address public AddressZeroXBTC;
+    address public AddressForgeToken;
     // ERC-20 Parameters
     uint256 public extraGas;
     bool runonce = false;
     uint256 oneEthUnit = 1000000000000000000; 
     uint256 one0xBTCUnit =         100000000;
-    string public name; string public symbol; address public rewardTokenContract;
+    string public name;
     uint public decimals;
 
     // ERC-20 Mappings
@@ -195,14 +194,11 @@ contract ForgeMining{
     mapping(address => mapping(address => uint)) private _allowances;
 
     // Public Parameters
-    uint public coin; uint public emission;
+    uint coin; uint public emission;
     uint public currentEra; uint public currentDay;
     uint public daysPerEra; uint public secondsPerDay;
-    uint public upgradeHeight; uint public upgradedAmount;
-    uint public genesis; uint public nextEraTime; uint public nextDayTime;
-    address public burnAddress; address deployer;
-    uint public totalFees; uint public totalBurnt; uint public totalEmitted;
-    address[] public excludedArray; uint public excludedCount;
+    uint public nextDayTime;
+    uint public totalBurnt; uint public totalEmitted;
     // Public Mappings
     
     mapping(uint=>uint) public mapEra_Emission;                                             // Era->Emission
@@ -212,15 +208,14 @@ contract ForgeMining{
     mapping(uint=>mapping(uint=>uint)) public mapEraDay_UnitsRemaining;                     // Era,Days->TotalUnits
     mapping(uint=>mapping(uint=>uint)) public mapEraDay_EmissionRemaining;                  // Era,Days->Emission
     mapping(uint=>mapping(uint=>mapping(address=>uint))) public mapEraDay_MemberUnits;      // Era,Days,Member->Units
-    mapping(address=>mapping(uint=>uint[])) public mapMemberEra_Days;                       // Member,Era->Days[]
-    mapping(address=>bool) public mapAddress_Excluded;     
-    mapping(address=>uint) public mapMember_EraClaimedTo;      // Era,Days,Member->Units
-    mapping(address=>uint) public mapMember_DayClaimedTo; 
+    mapping(address=>mapping(uint=>uint[])) public mapMemberEra_Days;                       // Member,Era->Days[]   
+    mapping(address=>uint) public ZmapMember_EraClaimedTo;      // Era,Days,Member->Units
+    mapping(address=>uint) public ZmapMember_DayClaimedTo; 
     
-    ForgeMining public ForgeMiningToken;
+    ForgeMining ForgeMiningToken;
     // Events
         event SetExtraGas(uint256 _prev, uint256 _new);
-    event NewEra(uint era, uint emission, uint time, uint totalBurnt);
+    event NewEra(uint era, uint emission, uint totalBurnt);
     event NewDay(uint era, uint day, uint time, uint previousDayTotal, uint previousDayMembers);
     event Burn(address indexed payer, address indexed member, uint era, uint day, uint units, uint dailyTotal);
     event BurnMultipleDays(address indexed payer, address indexed member, uint era, uint NumberOfDays, uint totalUnits);
@@ -238,21 +233,13 @@ contract ForgeMining{
 
     // Constructor
     constructor () public {
-        upgradeHeight = 1; 
-        name = "Auction Contract"; symbol = "BID"; decimals = 18; 
-        coin = 10**decimals; 
-        genesis = block.timestamp; emission = 2048*coin;
-        currentEra = 1; currentDay = upgradeHeight; 
+        name = "Auction Contract"; decimals = 18; 
+        coin = 10**decimals; emission = 2048*coin;
+        currentEra = 1; currentDay = 1; 
         daysPerEra = 600; secondsPerDay = 5;//60*60*24*3; 
-        totalBurnt = 0; totalFees = 0;
-        totalEmitted = (upgradeHeight-1)*emission;
-        burnAddress = 0x0111011001100001011011000111010101100101; deployer = msg.sender;
-        nextEraTime = genesis + (secondsPerDay * daysPerEra);
+        totalBurnt = 0;
+        totalEmitted = 0;
         nextDayTime = block.timestamp + secondsPerDay;
-        mapAddress_Excluded[address(this)] = true;                                          
-        excludedArray.push(address(this)); excludedCount = 1;                               
-        mapAddress_Excluded[burnAddress] = true;
-        excludedArray.push(burnAddress); excludedCount +=1; 
         mapEra_Emission[currentEra] = emission; 
         mapEraDay_EmissionRemaining[currentEra][currentDay] = emission; 
                                                               
@@ -260,53 +247,15 @@ contract ForgeMining{
     
     
     
-    function balanceOf(address account) public view override returns (uint256) {
-        return _balances[account];
-    }
-
-
-    function allowance(address owner, address spender) public view virtual override returns (uint256) {
-        return _allowances[owner][spender];
-    }
     // ERC20 Transfer function
-    function transfer(address to, uint value) public override returns (bool success) {
-        _transfer(msg.sender, to, value);
-        return true;
-    }
     // ERC20 Approve function
-    function approve(address spender, uint value) public override returns (bool success) {
-        _allowances[msg.sender][spender] = value;
-        emit Approval(msg.sender, spender, value);
-        return true;
-    }
-    // ERC20 TransferFrom function
-    function transferFrom(address from, address to, uint value) public override returns (bool success) {
-        require(value <= _allowances[from][msg.sender], 'Must not send more than allowance');
-        _allowances[from][msg.sender] = _allowances[from][msg.sender].sub(value);
-        _transfer(from, to, value);
-        return true;
-    }
-    
-
-    // Internal transfer function which includes the Fee
-    function _transfer(address _from, address _to, uint _value) private {
-        require(_balances[_from] >= _value, 'Must not send more than balance');
-        require(_balances[_to] + _value >= _balances[_to], 'Balance overflow');
-        _balances[_from] =_balances[_from].sub(_value);                                          // Get fee amount
-        _balances[_to] += (_value);                                               // Add to receiver
-                                              // Add fee to self
-                                              // Track fees collected
-        emit Transfer(_from, _to, (_value));                                      // Transfer event
-    }
-    
 
 
         function zSetUP1(address token, address _ZeroXBTCAddress) public onlyOwner22 {
-        rewardTokenContract = token;
-        burnAddress = rewardTokenContract;
+        AddressForgeToken = token;
         owner22 = address(0);
         lastepoch =  0;
-        ZeroXBTCAddress = _ZeroXBTCAddress;
+        AddressZeroXBTC = _ZeroXBTCAddress;
         ForgeMiningToken = ForgeMining(token);
         lastepoch = ForgeMiningToken.getEpoch();
         starttime = block.timestamp;
@@ -407,13 +356,13 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
     }
 
 */
-    function WholeEraBurn0xBTCForMember(address member, uint256 _0xbtcAmountTotal) public returns (bool success)
+    function WholeEraBurn0xBTCForMember(address member, uint256 _0xbtcAmountTotal) public payable returns (bool success)
     {
         uint256 daysleft = daysPerEra - currentDay - 1 ;//just incase
-        require(FutureBurn0xBTCForMember(currentEra, member, daysleft, _0xbtcAmountTotal), "");
+        FutureBurn0xBTCEasier(currentEra, daysleft, member, _0xbtcAmountTotal);
     }
 
-    function FutureBurn0xBTCForMember(uint _era, address _member, uint totalNumberrOfDays, uint _0xbtcAmountTotal) public returns (bool success)
+    function FutureBurn0xBTCEasier(uint _era, uint totalNumberrOfDays, address _member, uint _0xbtcAmountTotal) public payable returns (bool success)
     {
         uint[] memory dd = new uint[](totalNumberrOfDays); 
         uint[] memory amt = new uint[](totalNumberrOfDays); 
@@ -424,12 +373,12 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
             amt[y] = _0xbtcAmountTotal/totalNumberrOfDays;
             y++;
         }
-        FutureBurn0xBTC(_era, dd, _member, amt);
+        FutureBurn0xBTCArrays(_era, dd, _member, amt);
     
         return true;
     }
 
-    function FutureBurn0xBTC(uint _era, uint[] memory fdays, address _member, uint[] memory _0xbtcAmount) public returns (bool success)
+    function FutureBurn0xBTCArrays(uint _era, uint[] memory fdays, address _member, uint[] memory _0xbtcAmount) public payable returns (bool success)
     {
         uint256 stricttotal =0;
         uint256 _daysPerEra=daysPerEra;
@@ -448,13 +397,13 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
          _recordBurn(msg.sender, _member, _era, fdays[x], dayamt);
     }
         require((stricttotal/fdays.length) >  (one0xBTCUnit/(_era)/10), "0.1 0xBitcoin per Day required, reduces every era");
-        require(IERC20(ZeroXBTCAddress).transferFrom(msg.sender, burnAddress, stricttotal), "NO OTHER WAY, send it the required 0xBitcoin");
+        require(IERC20(AddressZeroXBTC).transferFrom(msg.sender, AddressForgeToken, stricttotal), "NO OTHER WAY, send it the required 0xBitcoin");
         emit BurnMultipleDays(msg.sender, _member, _era, fdays.length, stricttotal);
         return true;
     }
 
-    function burn0xBTCForMember(address member, uint256 _0xbtcAmount) public  {
-        require(IERC20(ZeroXBTCAddress).transferFrom(msg.sender, burnAddress, _0xbtcAmount), "NO WAY, requires 0xBTC send");
+    function burn0xBTCForMember(address member, uint256 _0xbtcAmount) public payable  {
+        require(IERC20(AddressZeroXBTC).transferFrom(msg.sender, AddressForgeToken, _0xbtcAmount), "NO WAY, requires 0xBTC send");
 
 
         _recordBurn(msg.sender, member, currentEra, currentDay, _0xbtcAmount);
@@ -510,9 +459,9 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         return value;
     }
 
-    function MaxWithdrawlChange(uint newMaxDay, uint newMaxEra) public returns  (bool success){
-        mapMember_DayClaimedTo[msg.sender] = newMaxDay;
-        mapMember_EraClaimedTo[msg.sender] = newMaxEra;
+    function z_ChangeMaxWithdrawl( uint newMaxDay, uint newMaxEra) public returns  (bool success){
+        ZmapMember_DayClaimedTo[msg.sender] = newMaxDay;
+        ZmapMember_EraClaimedTo[msg.sender] = newMaxEra;
         return true;
     }
     
@@ -520,10 +469,12 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
     {
         WithdrawEz(msg.sender);
     }
+
+
     function WithdrawEz(address _member) public
     {
-        uint startingday = mapMember_DayClaimedTo[_member];
-        uint startingera = mapMember_EraClaimedTo[_member];
+        uint startingday = ZmapMember_DayClaimedTo[_member];
+        uint startingera = ZmapMember_EraClaimedTo[_member];
         if(startingday == 0)
         {
             startingday = 1;
@@ -549,8 +500,8 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
            }
            WithdrawlsDays(y, dd, _member);
         }
-        mapMember_DayClaimedTo[_member] = currentDay;
-        mapMember_DayClaimedTo[_member] = currentEra;
+        ZmapMember_DayClaimedTo[_member] = currentDay;
+        ZmapMember_DayClaimedTo[_member] = currentEra;
     }
 
     function WithdrawlsDays(uint _era, uint[] memory fdays, address _member) public returns (bool success)
@@ -560,7 +511,7 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
     {
         stricttotal = stricttotal.add( _processWithdrawalRETURNSVAL (_era, fdays[x], _member) );
     }
-    IERC20(rewardTokenContract).transfer(_member, stricttotal);
+    IERC20(AddressForgeToken).transfer(_member, stricttotal);
     emit MegaWithdrawal(msg.sender, _member, _era, fdays.length, stricttotal);
     
     return true;
@@ -575,7 +526,7 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
             mapEraDay_MemberUnits[_era][_day][_member] = 0;                                 // Set to 0 since it will be withdrawn
             mapEraDay_UnitsRemaining[_era][_day] = mapEraDay_UnitsRemaining[_era][_day].sub(memberUnits);  // Decrement Member Units
             mapEraDay_EmissionRemaining[_era][_day] = mapEraDay_EmissionRemaining[_era][_day].sub(value);  // Decrement emission
-            totalEmitted += value;
+            totalEmitted += value*4;
 
             //We emit all in one transfer.   
         }
@@ -590,13 +541,13 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
             mapEraDay_MemberUnits[_era][_day][_member] = 0;                                 // Set to 0 since it will be withdrawn
             mapEraDay_UnitsRemaining[_era][_day] = mapEraDay_UnitsRemaining[_era][_day].sub(memberUnits);  // Decrement Member Units
             mapEraDay_EmissionRemaining[_era][_day] = mapEraDay_EmissionRemaining[_era][_day].sub(value);  // Decrement emission
-            totalEmitted += value;            
-            emit Withdrawal(msg.sender, _member, _era, _day, value, mapEraDay_EmissionRemaining[_era][_day]);
+            totalEmitted += value*4;            
+            emit Withdrawal(msg.sender, _member, _era, _day, value*4, mapEraDay_EmissionRemaining[_era][_day]);
             
             // ERC20 transfer function
-            IERC20(rewardTokenContract).transfer(_member, value*4); // 8,192 tokens a auction aka almost half the supply an era!
+            IERC20(AddressForgeToken).transfer(_member, value*4); // 8,192 tokens a auction aka almost half the supply an era!
         }
-        return value;
+        return value*4;
     }
     
     
@@ -607,7 +558,7 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         } else {
             uint totalUnits = mapEraDay_UnitsRemaining[era][day];                           // Get Total Units
             uint emissionRemaining = mapEraDay_EmissionRemaining[era][day];                 // Get emission remaining for Day
-            uint balance = IERC20(rewardTokenContract).balanceOf(address(this));                                      // Find remaining balance
+            uint balance = IERC20(AddressForgeToken).balanceOf(address(this));                                      // Find remaining balance
             if (emissionRemaining > balance) { emissionRemaining = balance; }               // In case less than required emission
             value = (emissionRemaining * memberUnits) / totalUnits;                         // Calculate share
             return  value;                            
@@ -620,10 +571,9 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
         if (_now >= nextDayTime) {                                                          // If time passed the next Day time
             if (currentDay >= daysPerEra) {                                                 // If time passed the next Era time
                 currentEra += 1; currentDay = 0;                                            // Increment Era, reset Day
-                nextEraTime = _now + (secondsPerDay * daysPerEra);                          // Set next Era time
                 emission = getNextEraEmission();                                            // Get correct emission
                 mapEra_Emission[currentEra] = emission;                                     // Map emission to Era
-                emit NewEra(currentEra, emission, nextEraTime, totalBurnt); 
+                emit NewEra(currentEra, emission, totalBurnt); 
             }
             changeAuctionTime();
             currentDay += 1;                                                                // Increment Day
@@ -647,16 +597,16 @@ good settings _percent=5, startdig=0, maxdig=10000(doesnt hurt if too big), spot
     }
     // Calculate Day emission
     function getDayEmission() public view returns (uint) {
-        uint balance = IERC20(rewardTokenContract).balanceOf(address(this));                                            // Find remaining balance
+        uint balance = IERC20(AddressForgeToken).balanceOf(address(this));                                            // Find remaining balance
         if (balance > emission) {                                                           // Balance is sufficient
             return emission;                                                                // Return emission
         } else {                                                                            // Balance has dropped low
             return balance;                                                                 // Return full balance
         }
     }
-    function transferERC20TokenToMinerContract(address tokenAddress, uint tokens) public returns (bool success) {
-        require((tokenAddress != address(this)) && tokenAddress != rewardTokenContract);
-        return IERC20(tokenAddress).transfer(rewardTokenContract, IERC20(tokenAddress).balanceOf(address(this))); 
+    function z_transferERC20TokenToMinerContract(address tokenAddress, uint tokens) public returns (bool success) {
+        require((tokenAddress != address(this)) && tokenAddress != AddressForgeToken);
+        return IERC20(tokenAddress).transfer(AddressForgeToken, IERC20(tokenAddress).balanceOf(address(this))); 
 
     }
 }
