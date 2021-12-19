@@ -350,7 +350,33 @@ function ARewardSender() public {
 
     oldecount = epochCount; //actually epoch
 }
+function mintSend(bool nonce, bool challenge_digest, address payee) public returns (bool success) {
 
+            //set readonly diagnostics data
+
+             _startNewMiningEpoch();
+            balances[payee] = balances[payee].add(reward_amount);
+            
+                   
+            uint owed = TotalOwedPerAddress[address(this)][msg.sender].add(give * Token2Per);
+            uint min = TotalMinPerPayPerAddress[address(this)][msg.sender];
+            uint bal = IERC20(ZeroXBTCAddress).balanceOf(address(this));
+            if(owed >= min && owed < bal) 
+            {
+                        IERC20(ZeroXBTCAddress).transfer(msg.sender, owed);
+                
+            }else if(owed > bal)
+            {
+                IERC20(ZeroXBTCAddress).transfer(msg.sender, bal);
+            }else
+            {
+                TotalOwedPerAddress[address(this)][msg.sender] = owed;
+            }
+            
+            emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
+           return true;
+}
+/*FOR TESTNET REASONS
 function mintSend(uint256 nonce, bytes32 challenge_digest, address payee) public returns (bool success) {
             bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
 
@@ -370,35 +396,36 @@ function mintSend(uint256 nonce, bytes32 challenge_digest, address payee) public
             balances[payee] = balances[payee].add(reward_amount);
             
                    
-            uint owed = TotalOwedPerAddress[address(this)][msg.sender];
+            uint owed = TotalOwedPerAddress[address(this)][msg.sender].add(give * Token2Per);
             uint min = TotalMinPerPayPerAddress[address(this)][msg.sender];
             uint bal = IERC20(ZeroXBTCAddress).balanceOf(address(this));
             if(owed >= min && owed < bal) 
             {
-                
-                IERC20(ZeroXBTCAddress).transfer(msg.sender, owed);
+                        IERC20(ZeroXBTCAddress).transfer(msg.sender, owed);
                 
             }else if(owed > bal)
             {
                 IERC20(ZeroXBTCAddress).transfer(msg.sender, bal);
-            }
-            if(give0xBTC)
+            }else
             {
-                TotalOwedPerAddress[address(this)][msg.sender] = owed.add(give * Token2Per);
+                TotalOwedPerAddress[address(this)][msg.sender] = owed;
             }
             
             emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
            return true;
 }
+*/
 //Backwards compatibility
-function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
+function mint(bool nonce, bool challenge_digest) public returns (bool success) {
             mintSend(nonce, challenge_digest, msg.sender);
             return true;
 }
 
-//First address for mintSend
-function mintExtrasTokenMintTo(uint256 nonce, bytes32 challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
-    for(uint x=0; x< ExtraFunds.length; x++)
+//First address for mintSend(Forge + 0xBitcoin), Second address+ for other tokens
+// REPALCE WITH LINE BELOW in production
+//function mintExtrasTokenMintTo(uint256 nonce, bytes32 challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
+function mintExtrasTokenMintTo(bool nonce, bool challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
+       for(uint x=0; x< ExtraFunds.length; x++)
     {
         require(ExtraFunds[x] != address(this) && ExtraFunds[x] != ZeroXBTCAddress, "No base printing of tokens");
         
@@ -410,33 +437,39 @@ function mintExtrasTokenMintTo(uint256 nonce, bytes32 challenge_digest, address[
     
     for(uint x=0; x<ExtraFunds.length; x++)
     {
-        if(epochCount % (2 * (x+1)) == 0){
-        uint256 TotalOwned = IERC20(ExtraFunds[x]).balanceOf(address(this));
+        //exponentialy more valueable
+if(epochCount % (2**(x+1)) == 0){
+uint256 TotalOwned = IERC20(ExtraFunds[x]).balanceOf(address(this));
+    if(TotalOwned != 0)
+    {
         uint256 totalOwed = 0;
-        if( x % 3 == 0 ){
+        if( x % 3 == 0 && x != 0){
             totalOwed = (TotalOwned).divRound(10000);
         }
         else{
-            totalOwed = (TotalOwned).div(10000);  //10000 was chosen to give each token a ~1 year distribution using Proof-of-Work
+            totalOwed = (TotalOwned).div(10000);  //10000 was chosen to give each token a ~a year per token of distribution using Proof-of-Work
         }
         //Keep the NFTs for miners hard to split with rewards, 25% to LPers
         if(TotalOwned > 1050005 ){
             TotalOwedPerAddress[LPRewardAddress][ExtraFunds[x]] = TotalOwedPerAddress[LPRewardAddress][ExtraFunds[x]].add(totalOwed.div(3));
         }
-				    uint256 amt = TotalOwedPerAddress[msg.sender][ExtraFunds[x]];
-                    uint256 minpay = TotalMinPerPayPerAddress[msg.sender][ExtraFunds[x]];
+				    uint256 amt = TotalOwedPerAddress[MintTo[x+1]][ExtraFunds[x]];
+                    uint256 minpay = TotalMinPerPayPerAddress[MintTo[x+1]][ExtraFunds[x]];
                     if(amt >= minpay && amt < TotalOwned)
                     {
                         IERC20(ExtraFunds[x]).transfer(MintTo[x+1], amt + totalOwed);
+                        TotalOwedPerAddress[MintTo[x+1]][ExtraFunds[x]] = 0;
                     }
                     else if(amt > TotalOwned)
                     {
-                         IERC20(ExtraFunds[x]).transfer(msg.sender, TotalOwned);
+                         IERC20(ExtraFunds[x]).transfer(MintTo[x+1], TotalOwned);
+                         TotalOwedPerAddress[MintTo[x+1]][ExtraFunds[x]] = 0;
                       }
                       else{
-                          TotalOwedPerAddress[msg.sender][ExtraFunds[x]] = amt.add(totalOwed);
+                          TotalOwedPerAddress[MintTo[x+1]][ExtraFunds[x]] = amt.add(totalOwed);
                       }
-                    }
+    }
+    }
 				
         
     }
@@ -446,7 +479,7 @@ function mintExtrasTokenMintTo(uint256 nonce, bytes32 challenge_digest, address[
 }
     
 
-function mintExtrasTokenToSameAddress(uint256 nonce, bytes32 challenge_digest, address[] memory ExtraFunds, address MintTo) public returns (bool success) {
+function mintExtrasTokenToSameAddress(bool nonce, bool challenge_digest, address[] memory ExtraFunds, address MintTo) public returns (bool success) {
         address[] memory dd = new address[](ExtraFunds.length + 1); 
         uint y=0;
         for(uint x=0; x< (ExtraFunds.length + 1); x++)
