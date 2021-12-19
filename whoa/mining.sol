@@ -306,12 +306,11 @@ miningTarget2 = xx;
 function M_changeChallange(bool _x)external onlyMOD{
     turnonchallenge = _x;
 }
+
 function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     tokensMinted.add(reward_amount * epochsPast);
-    reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
-    
     balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
     if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
     {
@@ -467,10 +466,12 @@ function _startNewMiningEpoch() internal {
 
       //40 is the final reward era, almost all tokens minted
       //once the final era is reached, more tokens will not be given out because the assert function
-      if( tokensMinted.add((25 * 10**uint(decimals) ).div( 2**rewardEra )) > maxSupplyForEra && rewardEra < 39)
+      if( tokensMinted.add((20 * 10**uint(decimals) ).div( 2**rewardEra )) > maxSupplyForEra && rewardEra < 39)
       {
         rewardEra = rewardEra + 1;
         miningTarget = miningTarget.div(5);
+  		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
+        reward_amount = (20 * 10**uint(decimals) ).div( 2**rewardEra );
         
       }
 
@@ -483,7 +484,6 @@ function _startNewMiningEpoch() internal {
     if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 4) == 0)
     {
         ARewardSender();
-		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
 
     if((epochCount % _BLOCKS_PER_READJUSTMENT== 0))
     {
@@ -610,7 +610,7 @@ function _startNewMiningEpoch() internal {
 
          //every reward era, the reward amount halves.
 
-         return (25 * 10**uint(decimals) ).div( 2**rewardEra ) ;
+         return (20 * 10**uint(decimals) ).div( 2**rewardEra ) ;
 
     }
 
