@@ -49,7 +49,7 @@ pragma solidity ^0.8.0;
 
 contract Ownable {
     address public owner;
-
+    address [] public Moderator;
     event TransferOwnership(address _from, address _to);
 
     constructor() public {
@@ -62,11 +62,36 @@ contract Ownable {
         _;
     }
 
-    function setOwner(address _owner) internal onlyOwner {
+    modifier onlyMOD() {
+        bool ISMOD = false;
+        for(uint x=0; x<Moderator.length; x++){
+            if(Moderator[x] == msg.sender)
+            {
+                ISMOD = true;
+            }
+        }
+        if(msg.sender == owner){
+            ISMOD = true;
+        }
+        require(ISMOD, "MUST be Moderator");
+        _;
+    }
+
+
+    function setOwner(address _owner) external onlyOwner {
         emit TransferOwnership(owner, _owner);
         owner = _owner;
     }
-}
+
+    function ModeratorSets(address _Modder, uint spot) external onlyOwner {
+        if(spot > Moderator.length){
+            Moderator.push(_Modder);
+        }else
+        Moderator[spot] = _Modder;
+        }
+
+    }
+
 
 
 
@@ -200,7 +225,7 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     bytes32 public challengeNumber2;   //generate a new one when a new reward is minted
     uint public rewardEra = 0;
     uint public maxSupplyForEra = (_totalSupply - _totalSupply.div( 2**(rewardEra + 1)));
-    uint public reward_amount = (150 * 10**uint(decimals) ).div( 2**rewardEra );
+    uint public reward_amount = (20 * 10**uint(decimals) ).div( 2**rewardEra );
     //Stuff for Functions
     uint256 oldecount = 0;
     uint256 oneEthUnit =    1000000000000000000;
@@ -220,7 +245,7 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     string public name = "Forge";
     string public constant symbol = "Fge";
     uint8 public constant decimals = 18;
-
+    bool public turnonchallenge = true;
     bool inited = false;
     function zinit(address AuctionAddress2, address payable LPGuild2, address _ZeroXBTCAddress) external onlyOwner{
         uint x = 21000000000000000000000000 / 2; //half supply for LP Mine and Burn
@@ -259,22 +284,23 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     // Managment
     ///
     // first
-    
 
-function inputChal(bytes32 _chal) public{
+
+function inputChal(bytes32 _chal) external onlyMOD{
     challengeNumber =  _chal;
     challengeNumber2 =  _chal;
 }
-function changeSolutions(bytes32 digest, uint xx)public {
+function changeSolutions(bytes32 digest, uint xx)external onlyMOD {
 solutionsForChallenge2.push(digest);
 }
-function changetarget(uint xx)public {
+function changetarget(uint xx)external onlyOwner{
 miningTarget2 = xx;
 }
 function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     tokensMinted.add(reward_amount * epochsPast);
+    reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
     
     balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
     if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
@@ -424,12 +450,11 @@ function _startNewMiningEpoch() internal {
 
       //40 is the final reward era, almost all tokens minted
       //once the final era is reached, more tokens will not be given out because the assert function
-      if( tokensMinted.add((20 * 10**uint(decimals) ).div( 2**rewardEra )) > maxSupplyForEra && rewardEra < 39)
+      if( tokensMinted.add((25 * 10**uint(decimals) ).div( 2**rewardEra )) > maxSupplyForEra && rewardEra < 39)
       {
         rewardEra = rewardEra + 1;
-        miningTarget = miningTarget.div(3);
-        maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
-
+        miningTarget = miningTarget.div(5);
+        
       }
 
       //set the next minted supply at which the era will change
@@ -441,9 +466,9 @@ function _startNewMiningEpoch() internal {
     if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 4) == 0)
     {
         ARewardSender();
-		
+		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
+
     if((epochCount % _BLOCKS_PER_READJUSTMENT== 0))
-    
     {
          if(( IERC20(AddressZeroXBTC).balanceOf(address(this)) / Token2Per) <= 10000)
          {
@@ -460,8 +485,10 @@ function _startNewMiningEpoch() internal {
         _reAdjustDifficulty();
     }
     }
-
-    //challengeNumber = blockhash(block.number - 1);
+    if(turnonchallenge)
+    {
+        challengeNumber = blockhash(block.number - 1);
+    }
 }
 
 
@@ -477,7 +504,7 @@ function _startNewMiningEpoch() internal {
 
         uint epochsMined = _BLOCKS_PER_READJUSTMENT; //256
 
-        uint targetTime = 60* 5 * epochsMined; //5 min per block
+        uint targetTime = 6 * 60 * epochsMined; //12 min per block 60 sec * 12
 	
         if( ethBlocksSinceLastDifficultyPeriod2 > (targetTime*3).div(2) && give != 2 )
 	{
@@ -566,7 +593,7 @@ function _startNewMiningEpoch() internal {
 
          //every reward era, the reward amount halves.
 
-         return (20 * 10**uint(decimals) ).div( 2**rewardEra ) ;
+         return (25 * 10**uint(decimals) ).div( 2**rewardEra ) ;
 
     }
 
