@@ -406,13 +406,13 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
     }
 
     function stake(uint128 amount) external payable {
-        //AddressesEntered[AddressesEntered.length] = msg.sender;
+        AddressesEntered[AddressesEntered.length] = msg.sender;
         stakeFor(msg.sender, amount);
     }
 
     function stakeFor(address forWhom, uint128 amount) public payable override updateReward(forWhom) {
         
-        //AddressesEntered[AddressesEntered.length] == msg.sender;
+        AddressesEntered[AddressesEntered.length] == forWhom;
         super.stakeFor(forWhom, amount);
     }
 
@@ -426,21 +426,21 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
         withdraw(uint128(balanceOf(msg.sender)));
     }
 
-    function Reset3and4(uint choice) public {
+    function Reset4and5(uint starting, uint maxlength) public returns (bool success){
 
-        for(uint x=AddressesEntered.length - 1; x >= 0; x--)
+        for(uint x=starting; x <= starting + maxlength; x++)
         {
                 userRewardsExtra[AddressesEntered[x]].rewardsExtra = 0;
                 userRewardsExtraExtra[AddressesEntered[x]].rewardsExtraExtra = 0;
-                
-                delete AddressesEntered[x];
         }
+        return true;
     }
 
-
-    function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
+//0 = Reward1 and Reward2, 1 = Reward1, 2 = Reward2, 3 = Reward3, 4 = RewardExtra, 5 = RewardExtraExtra
+function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
         uint256 reward = earned(msg.sender);
         uint256 reward2 = earned2(msg.sender);
+        //Reward & Reward2 aka 1 and 2
         if(choice == 0)
         {
             if (reward > 0) {
@@ -455,7 +455,8 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
                 totalRewarded2 = totalRewarded2 - reward2;
             }
         }
-        if(choice == 1)
+        //Reward2 Only
+        else if(choice == 2)
         {
             if(reward2 > 0)
           {
@@ -464,14 +465,45 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
                totalRewarded2 = totalRewarded2 - reward2;
            }
         }
-        if(choice == 2){
+        //Reward Only
+        else if(choice == 1){
                if (reward > 0) {
                    userRewards[msg.sender].rewards = 0;
                     require(rewardToken.transfer(msg.sender, reward), "reward transfer failed");
                   totalRewarded = totalRewarded - reward;
                 }
             }
-        
+        else if(choice == 3){
+                    uint256 reward3= earned3(msg.sender);
+                    if(reward3 > 0){
+                userRewards3[msg.sender].rewards3 = 0;
+                address payable receiver = payable(msg.sender);
+	            require(receiver.send(reward3), "Eth transfer failed");
+                totalRewarded3 = totalRewarded3 - reward3;
+                }
+                }
+        else if(choice == 4)
+        {
+            uint256 rewardExtra = earnedExtra(msg.sender);
+            if (rewardExtra > 0) {
+                userRewardsExtra[msg.sender].rewardsExtra = 0;
+                require(rewardTokenExtra.transfer(msg.sender, rewardExtra), "reward transfer failed");
+               totalRewardedExtra = totalRewardedExtra - rewardExtra;
+        }
+
+        }
+        else if(choice == 5)
+        {
+            
+            uint256 rewardExtraExtra = earnedExtraExtra(msg.sender);
+             if(rewardExtraExtra > 0)
+              {
+            
+                   userRewardsExtraExtra[msg.sender].rewardsExtraExtra = 0;
+                   require(rewardTokenExtraExtra.transfer(msg.sender, rewardExtraExtra), "reward token 2 transfer failed");
+                   totalRewardedExtra = totalRewardedExtraExtra - rewardExtraExtra;
+              }
+        }
         emit RewardPaidBasic(msg.sender, reward, reward2);
     }
 
@@ -517,7 +549,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
             emit RewardPaid(msg.sender, reward, reward2, reward3, rewardExtra, rewardExtraExtra);
     }
  
-
+/*
     function getRewardExtra() public updateReward(msg.sender) {
         uint256 rewardExtra = earnedExtra(msg.sender);
         if (rewardExtra > 0) {
@@ -544,7 +576,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
 
 
 
-
+*/
     function setRewardParamsExtraExtra(uint256 reward, uint64 duration) external {
         unchecked {
             require(reward > 0);
@@ -552,7 +584,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
             Era += 1;
             rewardPerTokenStoredExtraExtra = rewardPerTokenExtraExtra();
             uint64 blockTimestamp = uint64(block.timestamp);
-            require(blockTimestamp > (periodFinishExtra + duration), "Claim period is same as rewards period");
+            require(blockTimestamp > (periodFinishExtra + (duration*4) / (3)), "Claim period allows for withdrawal period before claims change 1/3 # of days");
             uint256 maxRewardSupply = rewardTokenExtraExtra.balanceOf(address(this)) - totalRewardedExtraExtra;
             
             uint256 remaining = blockTimestamp - periodFinishExtraExtra;
@@ -560,7 +592,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
                 maxRewardSupply -= totalSupply;
             if(maxRewardSupply > duration)
             {
-                rewardRateExtraExtra = (maxRewardSupply)/duration;
+                rewardRateExtraExtra = (maxRewardSupply/2)/duration;
             }
             else{
                 rewardRateExtraExtra = 0;
@@ -583,7 +615,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
             Era += 1;
             rewardPerTokenStoredExtra = rewardPerTokenExtra();
             uint64 blockTimestamp = uint64(block.timestamp);
-            require(blockTimestamp > (periodFinishExtra + duration), "Claim period is same as rewards period");
+            require(blockTimestamp > (periodFinishExtra + (duration*4) / (3)), "Claim period allows for withdrawal period before claims change 1/3 # of days");
             uint256 maxRewardSupply = rewardTokenExtra.balanceOf(address(this)) - totalRewardedExtra;
             
             uint256 remaining = blockTimestamp - periodFinishExtra;
@@ -591,7 +623,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
                 maxRewardSupply -= totalSupply;
             if(maxRewardSupply > duration)
             {
-                rewardRateExtra = (maxRewardSupply)/duration;
+                rewardRateExtra = (maxRewardSupply/2)/duration;
             }
             else{
                 rewardRateExtra = 0;
@@ -643,7 +675,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
                 maxRewardSupply -= totalSupply;
             if(maxRewardSupply > duration)
             {
-                rewardRate = (maxRewardSupply)/duration;
+                rewardRate = (maxRewardSupply/2)/duration;
             }
             else{
                 rewardRate = 0;
@@ -672,7 +704,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
                 maxRewardSupply2 -= totalSupply;
             if(maxRewardSupply2 > reward)
             {
-                rewardRate2 = (maxRewardSupply2)/reward;
+                rewardRate2 = (maxRewardSupply2/2)/reward;
             }
             else{
                 rewardRate2 = 0;
@@ -697,12 +729,12 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
             rewardPerTokenStored3 = rewardPerToken3();
             uint64 blockTimestamp = uint64(block.timestamp);
             require(blockTimestamp > periodFinish3, "MUST BE AFTER ERA");
-            uint256 maxRewardSupply3 = address(this).balance / 2 - totalRewarded3;
+            uint256 maxRewardSupply3 = address(this).balance - totalRewarded3;
             uint256 remaining = blockTimestamp - periodFinish3;
 
             if(maxRewardSupply3 > duration)
             {
-                rewardRate3 = (maxRewardSupply3)/duration;
+                rewardRate3 = (maxRewardSupply3/2)/duration;
             }
             else{
                 rewardRate3 = 0;
