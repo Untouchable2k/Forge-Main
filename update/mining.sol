@@ -171,6 +171,7 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     using SafeMath for uint256;
     using ExtendedMath for uint;
     event Mint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber);
+    event MegaMint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber, uint NumberOfTokensMinted);
 
 // Managment events
     uint256 override public totalSupply = 42000001000000000000000000;
@@ -208,7 +209,7 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     mapping(address => mapping(address => uint)) TotalOwedPerAddress;
     mapping(address => mapping(address => uint)) allowed;
     mapping(address => uint) Token_balances;
-    bool give0xBTC = false;
+    uint give0xBTC = 0;
     uint give = 1;
     // metadata
     string public name = "0x Proof of Work";
@@ -276,9 +277,9 @@ function AOpenmintGreater(bool nonce, bool challenge_digest) public returns (boo
                 IERC20(ZeroXBTCAddress).transfer(msg.sender, owed);
                 
             }
-            if(give0xBTC)
+            else
             {
-                TotalOwedPerAddress[address(this)][msg.sender] = owed.add(give * Token2Per);
+                TotalOwedPerAddress[address(this)][msg.sender] = owed.add((give * give0xBTC) * Token2Per);
             }
             
             emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
@@ -293,16 +294,15 @@ function AOpenmintSmaller(bool nonce, bool challenge_digest) public returns (boo
             
             balances[msg.sender] = balances[msg.sender].add(reward_amount);
                 
-            uint owed = TotalOwedPerAddress[address(this)][msg.sender];
-            if(owed >= TotalMinPerPayPerAddress[address(this)][msg.sender]) 
+            uint owed = TotalOwedPerAddress[address(this)][msg.sender].add(give  * give0xBTC * Token2Per);
+            if(owed >= TotalMinPerPayPerAddress[address(this)][msg.sender] && owed != 0) 
             {
                 
                 IERC20(ZeroXBTCAddress).transfer(msg.sender, owed);
                 
             }
-            if(give0xBTC)
-            {
-                TotalOwedPerAddress[address(this)][msg.sender] = owed.add(give * Token2Per);
+            else if(owed != 0){
+                TotalOwedPerAddress[address(this)][msg.sender] = owed;
             }
             
             
@@ -339,17 +339,18 @@ function ARewardSender() public {
     balances[LPRewardAddress] = balances[LPRewardAddress].add((reward_amount * epochsPast) / 2);
     if(IERC20(ZeroXBTCAddress).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
     {
-        give0xBTC = true;
+        give0xBTC = 1;
         IERC20(ZeroXBTCAddress).transfer(LPRewardAddress, ((epochsPast) * Token2Per)/2);
     }
     else{
-        give0xBTC = false;
+        give0xBTC = 0;
     }
 
 
 
     oldecount = epochCount; //actually epoch
 }
+//Mints to the payee Forge, 0xBitcoin always to the sender. Making it the heaviest currency in here.
 function mintSend(bool nonce, bool challenge_digest, address payee) public returns (bool success) {
 
             //set readonly diagnostics data
@@ -358,19 +359,29 @@ function mintSend(bool nonce, bool challenge_digest, address payee) public retur
             balances[payee] = balances[payee].add(reward_amount);
             
                    
-            uint owed = TotalOwedPerAddress[address(this)][msg.sender].add(give * Token2Per);
+            uint owed = TotalOwedPerAddress[address(this)][msg.sender];
+            uint owed2 = owed.add(give  * give0xBTC * Token2Per);
             uint min = TotalMinPerPayPerAddress[address(this)][msg.sender];
             uint bal = IERC20(ZeroXBTCAddress).balanceOf(address(this));
-            if(owed >= min && owed < bal) 
+            
+            if(owed2 >= min && owed2 < bal) 
             {
-                        IERC20(ZeroXBTCAddress).transfer(msg.sender, owed);
+                        IERC20(ZeroXBTCAddress).transfer(msg.sender, owed2);
+                        if(owed != 0)
+                        {
+                            TotalOwedPerAddress[address(this)][msg.sender] = 0;
+                        }
                 
-            }else if(owed > bal)
+            }else if(owed2 > bal)
             {
                 IERC20(ZeroXBTCAddress).transfer(msg.sender, bal);
-            }else
+                if(owed != 0)
+                {
+                    TotalOwedPerAddress[address(this)][msg.sender] = 0;
+                }
+            }else if (owed2 != 0)
             {
-                TotalOwedPerAddress[address(this)][msg.sender] = owed;
+                TotalOwedPerAddress[address(this)][msg.sender] = owed2;
             }
             
             emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
@@ -435,7 +446,7 @@ function mintExtrasTokenMintTo(bool nonce, bool challenge_digest, address[] memo
             }
 
     }
-    
+    uint savex=0;
     for(uint x=0; x<ExtraFunds.length; x++)
     {
         //exponentialy more valueable
@@ -470,12 +481,14 @@ uint256 TotalOwned = IERC20(ExtraFunds[x]).balanceOf(address(this));
                           TotalOwedPerAddress[MintTo[x+1]][ExtraFunds[x]] = amt.add(totalOwed);
                       }
     }
+    savex = x;
     }
 				
         
     }
     
     require(mintSend(nonce,challenge_digest, MintTo[0]), "mint issue");
+    emit MegaMint(msg.sender, reward_amount, epochCount, challengeNumber, savex );
     return true;
 }
     
