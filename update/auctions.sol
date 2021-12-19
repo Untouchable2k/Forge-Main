@@ -316,9 +316,6 @@ contract ForgeMining{
 
     function changeAuctionTime() internal {
         uint256 epoch = ForgeMiningToken.getEpoch();
-        uint256 daysLeft = daysPerEra - currentDay;
-        if(daysLeft > 0)
-        {
 
 
              uint epochsMined = (epoch - lastepoch); 
@@ -354,7 +351,7 @@ contract ForgeMining{
 
         lastepoch = epoch;
         starttime = block.timestamp;
-    }
+    
     }
 
     //==================================AUCTIONEER======================================//
