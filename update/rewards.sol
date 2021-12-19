@@ -48,16 +48,12 @@ contract Ownable {
      * NOTE: Renouncing ownership will leave the contract without an owner,
      * thereby removing any functionality that is only available to the owner.
      */
-    function renounceOwnership() public onlyOwner {
-        emit OwnershipTransferred(owner, address(0));
-        owner = address(0);
-    }
 
     /**
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      * Can only be called by the current owner.
      */
-    function transferOwnership(address newOwner) public onlyOwner {
+    function Z_transferOwnership(address newOwner) public onlyOwner {
         _transferOwnership(newOwner);
     }
 
@@ -65,7 +61,6 @@ contract Ownable {
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      */
     function _transferOwnership(address newOwner) internal {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
         emit OwnershipTransferred(owner, newOwner);
         owner = newOwner;
     }
@@ -233,13 +228,13 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
 
     }
 
-    function addNewToken(IERC20 tokenExtra) external onlyOwner returns (bool success){
+    function Z_addNewToken(IERC20 tokenExtra) external onlyOwner returns (bool success){
         rewardRateExtra = 0;
         rewardTokenExtra = tokenExtra;
         return true;
     }
 
-    function addNewToken2(IERC20 tokenTWOExtra) external onlyOwner returns (bool success){
+    function Z_addNewToken2(IERC20 tokenTWOExtra) external onlyOwner returns (bool success){
         rewardRateExtraExtra = 0;
         rewardTokenExtraExtra = tokenTWOExtra;
         return true;
@@ -426,13 +421,18 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
         withdraw(uint128(balanceOf(msg.sender)));
     }
 
-    function Reset4and5(uint starting, uint maxlength) public returns (bool success){
+    function Z_Reset4and5(uint starting, uint maxlength) public returns (bool success){
 
         for(uint x=starting; x <= starting + maxlength; x++)
         {
                 userRewardsExtra[AddressesEntered[x]].rewardsExtra = 0;
                 userRewardsExtraExtra[AddressesEntered[x]].rewardsExtraExtra = 0;
+                
+                userRewardsExtra[AddressesEntered[x]].userRewardPerTokenPaidExtra = 0;
+                userRewardsExtraExtra[AddressesEntered[x]].userRewardPerTokenPaidExtraExtra = 0;
         }
+        rewardPerTokenStoredExtra = 0;
+        rewardPerTokenStoredExtraExtra = 0;
         return true;
     }
 
@@ -577,7 +577,7 @@ function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
 
 
 */
-    function setRewardParamsExtraExtra(uint256 reward, uint64 duration) external {
+    function Z_setRewardParamsExtraExtra(uint256 reward, uint64 duration) external {
         unchecked {
             require(reward > 0);
             duration = poolLength;  // Updates every 14 days
@@ -608,7 +608,7 @@ function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
 
 
 
-    function setRewardParamsExtra(uint256 reward, uint64 duration) external {
+    function Z_setRewardParamsExtra(uint256 reward, uint64 duration) external {
         unchecked {
             require(reward > 0);
             duration = poolLength;  // Updates every 14 days
@@ -641,26 +641,26 @@ function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
 
 
 
-    function setRewardParamsALL(uint choice) external {
+    function Z_setRewardParamsALL(uint choice) external {
 
-            this.setRewardParamsForge(2, 22);
-            this.setRewardParams0xBTC(2, 22);
-            this.setRewardParamsETH(2, 22);
+            this.Z_setRewardParamsForge(2, 22);
+            this.Z_setRewardParams0xBTC(2, 22);
+            this.Z_setRewardParamsETH(2, 22);
 
         if(choice == 1)
         {
-            this.setRewardParamsExtra(3, 33);
+            this.Z_setRewardParamsExtra(3, 33);
         }
         if(choice == 2){
-            this.setRewardParamsExtraExtra(3, 33);
-            this.setRewardParamsExtra(3, 33);
+            this.Z_setRewardParamsExtraExtra(3, 33);
+            this.Z_setRewardParamsExtra(3, 33);
         }
     }
 
 
 
 
-    function setRewardParamsForge(uint256 reward, uint64 duration) external {
+    function Z_setRewardParamsForge(uint256 reward, uint64 duration) external {
         unchecked {
             require(reward > 0);
             duration = poolLength;  // Updates every 14 days
@@ -689,7 +689,7 @@ function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
         }
     }
 
-    function setRewardParams0xBTC(uint256 reward, uint64 duration) external {
+    function Z_setRewardParams0xBTC(uint256 reward, uint64 duration) external {
         unchecked {
             require(reward > 0);
             duration = poolLength;  // Updates every 14 days
@@ -721,7 +721,7 @@ function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
 
     
 
-    function setRewardParamsETH(uint256 reward, uint64 duration) external {
+    function Z_setRewardParamsETH(uint256 reward, uint64 duration) external {
                 unchecked {
             require(reward > 0);
             duration = poolLength;  // Updates every 14 days
@@ -748,9 +748,6 @@ function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
     }
 
 
-    function withdrawReward() external onlyOwner {
-
-    }
 }
 
 /*
