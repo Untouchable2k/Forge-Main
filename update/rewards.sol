@@ -1,4 +1,4 @@
-  // Forge Rewards Contract
+// Forge Rewards Contract
 // Recieves 25% or 10,500,000 Forge Tokens from the ForgeMining Contract over 100+ years.
 // Also recieve 33% of the 0xBitcoin Tokens from the ForgeMining Contract over forever.
 
@@ -145,7 +145,7 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
     uint256 public totalRewarded3;
     uint256 public totalRewardedExtra;
     uint256 public totalRewardedExtraExtra;
-
+    address[] public AddressesEntered;
     IERC20 public rewardTokenExtraExtra;
     IERC20 public rewardTokenExtra;
     IERC20 public rewardToken2;
@@ -406,14 +406,18 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
     }
 
     function stake(uint128 amount) external payable {
+        //AddressesEntered[AddressesEntered.length] = msg.sender;
         stakeFor(msg.sender, amount);
     }
 
     function stakeFor(address forWhom, uint128 amount) public payable override updateReward(forWhom) {
+        
+        //AddressesEntered[AddressesEntered.length] == msg.sender;
         super.stakeFor(forWhom, amount);
     }
 
     function withdraw(uint128 amount) public override updateReward(msg.sender) {
+        
         super.withdraw(amount);
     }
 
@@ -421,6 +425,19 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
         getReward();
         withdraw(uint128(balanceOf(msg.sender)));
     }
+
+    function Reset3and4(uint choice) public {
+
+        for(uint x=AddressesEntered.length - 1; x >= 0; x--)
+        {
+                userRewardsExtra[AddressesEntered[x]].rewardsExtra = 0;
+                userRewardsExtraExtra[AddressesEntered[x]].rewardsExtraExtra = 0;
+                
+                delete AddressesEntered[x];
+        }
+    }
+
+
     function getRewardBasicBasic(uint choice) public updateReward(msg.sender) {
         uint256 reward = earned(msg.sender);
         uint256 reward2 = earned2(msg.sender);
@@ -440,20 +457,21 @@ contract ForgeRewards is StakedTokenWrapper, Ownable {
         }
         if(choice == 1)
         {
-        if(reward2 > 0)
-        {
-            userRewards2[msg.sender].rewards2 = 0;
-            require(rewardToken2.transfer(msg.sender, reward2), "reward token 2 transfer failed");
-            totalRewarded2 = totalRewarded2 - reward2;
+            if(reward2 > 0)
+          {
+               userRewards2[msg.sender].rewards2 = 0;
+              require(rewardToken2.transfer(msg.sender, reward2), "reward token 2 transfer failed");
+               totalRewarded2 = totalRewarded2 - reward2;
+           }
         }
         if(choice == 2){
-            if (reward > 0) {
-            userRewards[msg.sender].rewards = 0;
-            require(rewardToken.transfer(msg.sender, reward), "reward transfer failed");
-            totalRewarded = totalRewarded - reward;
-        }
-        }
-        }
+               if (reward > 0) {
+                   userRewards[msg.sender].rewards = 0;
+                    require(rewardToken.transfer(msg.sender, reward), "reward transfer failed");
+                  totalRewarded = totalRewarded - reward;
+                }
+            }
+        
         emit RewardPaidBasic(msg.sender, reward, reward2);
     }
 
