@@ -275,7 +275,6 @@ function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     tokensMinted.add(reward_amount * epochsPast);
-    reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
     
     balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
     if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
@@ -425,11 +424,12 @@ function _startNewMiningEpoch() internal {
 
       //40 is the final reward era, almost all tokens minted
       //once the final era is reached, more tokens will not be given out because the assert function
-      if( tokensMinted.add((150 * 10**uint(decimals) ).div( 2**rewardEra )) > maxSupplyForEra && rewardEra < 39)
+      if( tokensMinted.add((20 * 10**uint(decimals) ).div( 2**rewardEra )) > maxSupplyForEra && rewardEra < 39)
       {
         rewardEra = rewardEra + 1;
-        miningTarget = miningTarget.div(31);
-        
+        miningTarget = miningTarget.div(3);
+        maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
+
       }
 
       //set the next minted supply at which the era will change
@@ -441,9 +441,9 @@ function _startNewMiningEpoch() internal {
     if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 4) == 0)
     {
         ARewardSender();
-		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
-
+		
     if((epochCount % _BLOCKS_PER_READJUSTMENT== 0))
+    
     {
          if(( IERC20(AddressZeroXBTC).balanceOf(address(this)) / Token2Per) <= 10000)
          {
@@ -477,7 +477,7 @@ function _startNewMiningEpoch() internal {
 
         uint epochsMined = _BLOCKS_PER_READJUSTMENT; //256
 
-        uint targetTime = 60*36; //36 min per block 60 sec * 12
+        uint targetTime = 60* 5 * epochsMined; //5 min per block
 	
         if( ethBlocksSinceLastDifficultyPeriod2 > (targetTime*3).div(2) && give != 2 )
 	{
@@ -566,7 +566,7 @@ function _startNewMiningEpoch() internal {
 
          //every reward era, the reward amount halves.
 
-         return (150 * 10**uint(decimals) ).div( 2**rewardEra ) ;
+         return (20 * 10**uint(decimals) ).div( 2**rewardEra ) ;
 
     }
 
