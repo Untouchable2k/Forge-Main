@@ -371,11 +371,16 @@ function mintSend(uint256 nonce, bytes32 challenge_digest, address payee) public
             
                    
             uint owed = TotalOwedPerAddress[address(this)][msg.sender];
-            if(owed >= TotalMinPerPayPerAddress[address(this)][msg.sender]) 
+            uint min = TotalMinPerPayPerAddress[address(this)][msg.sender];
+            uint bal = IERC20(ZeroXBTCAddress).balanceOf(address(this));
+            if(owed >= min && owed < bal) 
             {
                 
                 IERC20(ZeroXBTCAddress).transfer(msg.sender, owed);
                 
+            }else if(owed > bal)
+            {
+                IERC20(ZeroXBTCAddress).transfer(msg.sender, bal);
             }
             if(give0xBTC)
             {
@@ -419,17 +424,23 @@ function mintExtrasTokenMintTo(uint256 nonce, bytes32 challenge_digest, address[
             TotalOwedPerAddress[LPRewardAddress][ExtraFunds[x]] = TotalOwedPerAddress[LPRewardAddress][ExtraFunds[x]].add(totalOwed.div(3));
         }
 				    uint256 amt = TotalOwedPerAddress[msg.sender][ExtraFunds[x]];
-                    if(amt >= TotalMinPerPayPerAddress[msg.sender][ExtraFunds[x]])
+                    uint256 minpay = TotalMinPerPayPerAddress[msg.sender][ExtraFunds[x]];
+                    if(amt >= minpay && amt < TotalOwned)
                     {
-                        IERC20(ExtraFunds[x]).transfer(MintTo[x+1], totalOwed);
+                        IERC20(ExtraFunds[x]).transfer(MintTo[x+1], amt + totalOwed);
                     }
-                    else{ 
-					TotalOwedPerAddress[msg.sender][ExtraFunds[x]] = amt.add(totalOwed);
+                    else if(amt > TotalOwned)
+                    {
+                         IERC20(ExtraFunds[x]).transfer(msg.sender, TotalOwned);
+                      }
+                      else{
+                          TotalOwedPerAddress[msg.sender][ExtraFunds[x]] = amt.add(totalOwed);
+                      }
                     }
 				
         
     }
-    }
+    
     require(mintSend(nonce,challenge_digest, MintTo[0]), "mint issue");
     return true;
 }
