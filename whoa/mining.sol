@@ -286,15 +286,25 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     // first
 
 
-function inputChal(bytes32 _chal) external onlyMOD{
+function M_changeChal(bytes32 _chal) external onlyMOD{
     challengeNumber =  _chal;
     challengeNumber2 =  _chal;
+    for(uint x=0; x< solutionsForChallenge2.length; x++)
+    {
+        solutionsForChallenge2.pop();
+    }
+    max = 0;
 }
-function changeSolutions(bytes32 digest, uint xx)external onlyMOD {
+function M_changeSolutions(bytes32 digest, uint xx)external onlyMOD {
 solutionsForChallenge2.push(digest);
 }
-function changetarget(uint xx)external onlyOwner{
+function M_changetarget(uint xx)external onlyMOD{
 miningTarget2 = xx;
+}
+
+
+function M_changeChallange(bool _x)external onlyMOD{
+    turnonchallenge = _x;
 }
 function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
@@ -332,12 +342,17 @@ function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool succ
             }
             for(uint x=0; x< solutionsForChallenge2.length; x++)
             {
-                require(solutionsForChallenge2[x] != digest, "NOT THE SAME DIGETS PLZ");
+                require(solutionsForChallenge2[x] != digest, "NOT THE SAME DIGEST PLZ");
             }
 	        bytes32 solution = solutionForChallenge[challengeNumber];
+            if(turnonchallenge){
+            require(solution == 0x0,"This Challenge was alreday mined by someone else");  //prevent the same answer from awarding twice
 	        solutionForChallenge[challengeNumber] = digest;
+            }else
+            {
             solutionsForChallenge2.push(digest);
             max = max.add(1);
+            }
 
 
             //set readonly diagnostics data
@@ -362,8 +377,10 @@ function mint2(uint256 nonce, bytes32 challenge_digest) public returns (bool suc
             require(uint256(digest) < miningTarget, "Digest must be smaller than miningTarget");
                 
 	        bytes32 solution = solutionForChallenge[challengeNumber];
-            //require(solution == 0x0,"This Challenge was alreday mined by someone else");  //prevent the same answer from awarding twice
-	        solutionForChallenge[challengeNumber] = digest;
+            if(turnonchallenge){
+            require(solution == 0x0,"This Challenge was alreday mined by someone else");  //prevent the same answer from awarding twice
+            }
+            solutionForChallenge[challengeNumber] = digest;
             //solutionsForChallenge2[max] = digest;
             max = max.add(1);
 
