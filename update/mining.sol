@@ -438,7 +438,7 @@ function mint(bool nonce, bool challenge_digest) public returns (bool success) {
 function mintExtrasTokenMintTo(bool nonce, bool challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
         require(MintTo.length == ExtraFunds.length + 1,"One Address for Forge+0xBTC, the rest for ExtraFunds. So MintTo has one more address variable than ExtraFunds");
        for(uint x=0; x< ExtraFunds.length; x++)
-    {
+        {
         require(ExtraFunds[x] != address(this) && ExtraFunds[x] != ZeroXBTCAddress, "No base printing of tokens");
         
             for(uint y=0; y< ExtraFunds.length; y++){
@@ -567,11 +567,11 @@ function _startNewMiningEpoch() public {
 
         uint targetTime = 60*36; //36 min per block 60 sec * 12
 	
-        if( ethBlocksSinceLastDifficultyPeriod2 > (targetTime*3).div(2) )
+        if( ethBlocksSinceLastDifficultyPeriod2 > (targetTime*3).div(2) && give != 2 )
 	{
 		give = 2;
 	}
-	else
+	else if(give != 1)
 	{
 		give = 1;
 	}
