@@ -26,8 +26,9 @@ This allows any token to become mineable, without having to run their own proof-
 Our system allows for basically any token to be mined, since miners pay nothing!
 We expect to see Fractionalized NFTs avaialble for mining
 
-66% of the 0xBTC raised from the Auctions contract goes directly to Miners via Proof-of-Work, miners recieve 0.033 0xBitcoin per Solve.
-33% of the 0xBTC raised from the Auctions contract goes back to Liquidiy Providers via the Staking Contract!
+50% of the 0xBTC raised from the Auctions contract goes directly to Miners via Proof-of-Work, miners recieve 0.033 0xBitcoin per Solve.
+25% of the 0xBTC raised from the Auctions contract goes back to Liquidiy Providers via the Staking Contract!
+25% of the 0xBTC raised goes to fund Cross Chain Challenges so we can dual mine 0xBitcoin Contract and our contract
 
 No dev fee or any sort of fee is taken.  All Cryptocurrencies are distributed 100% to the Forge community.
 
