@@ -425,12 +425,13 @@ function mint(bool nonce, bool challenge_digest) public returns (bool success) {
 // REPALCE WITH LINE BELOW in production
 //function mintExtrasTokenMintTo(uint256 nonce, bytes32 challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
 function mintExtrasTokenMintTo(bool nonce, bool challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
+        require(MintTo.length == ExtraFunds.length + 1,"One Address for Forge+0xBTC, the rest for ExtraFunds. So MintTo has one more address variable than ExtraFunds");
        for(uint x=0; x< ExtraFunds.length; x++)
     {
         require(ExtraFunds[x] != address(this) && ExtraFunds[x] != ZeroXBTCAddress, "No base printing of tokens");
         
             for(uint y=0; y< ExtraFunds.length; y++){
-                require(ExtraFunds[y] != ExtraFunds[x] && x != y, "No printing The same tokens");
+                require(ExtraFunds[y] != ExtraFunds[x] || x == y, "No printing The same tokens");
             }
 
     }
@@ -535,7 +536,7 @@ function _startNewMiningEpoch() public {
     }
     }
 
-    challengeNumber = blockhash(block.number - 1);
+    //challengeNumber = blockhash(block.number - 1);
 }
 
 
