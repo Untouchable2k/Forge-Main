@@ -1,0 +1,85 @@
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+
+/**
+ * Request testnet LINK and ETH here: https://faucets.chain.link/
+ * Find information on LINK Token Contracts and get the latest ETH and LINK faucets here: https://docs.chain.link/docs/link-token-contracts/
+ */
+
+/**
+ * @notice DO NOT USE THIS CODE IN PRODUCTION. This is an example contract. 
+ */
+contract GenericLargeResponse is ChainlinkClient {
+  using Chainlink for Chainlink.Request;
+
+  // variable bytes returned in a signle oracle response
+  bytes public data;
+  string public image_url;
+    address private oracle;
+    uint256 public fee;
+
+  /**
+   * @notice Initialize the link token and target oracle
+   * @dev The oracle address must be an Operator contract for multiword response
+   *
+   *
+   * Kovan Testnet details: 
+   * Link Token: 0xa36085F69e2889c224210F603D836748e7dC0088
+   * Oracle: 0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8 (Chainlink DevRel)
+   *
+   */
+  constructor(
+  ) {
+    setChainlinkToken(0xa36085F69e2889c224210F603D836748e7dC0088);
+    setChainlinkOracle(0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8);
+    oracle = 0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8;
+    
+        fee = 0.01 * 10 ** 18; // (Varies by network and job)
+  }
+
+  /**
+   * @notice Request variable bytes from the oracle
+   */
+    function requestVolumeData() public returns (bytes32 requestId) 
+    {
+        bytes32 jobId = "7a97ff8493ec406d90621b2531f9251a";
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfillBytes.selector);
+        
+        // Set the URL to perform the GET request on
+        request.add("get", "https://api.etherscan.io/api?module=logs&action=getLogs&fromBlock=13844520&toBlock=40000000&address=0xb6ed7644c69416d67b522e20bc294a9a9b405b31&topic0=0xcf6fbb9dcea7d07263ab4f5c3a92f53af33dffc421d9d121e1c74b307e68189d&apikey=YourApiKeyToken");
+        
+        // Set the path to find the desired data in the API response, where the response format is:
+        // {"RAW":
+        //   {"ETH":
+        //    {"USD":
+        //     {
+        //      "VOLUME24HOUR": xxx.xxx,
+        //     }
+        //    }
+        //   }
+        //  }
+        request.add("path", "results.data");
+        
+        // Multiply the result by 1000000000000000000 to remove decimals
+        
+        // Sends the request
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+  event RequestFulfilled(
+    bytes32 indexed requestId,
+    bytes indexed data
+  );
+
+  /**
+   * @notice Fulfillment function for variable bytes
+   * @dev This is called by the oracle. recordChainlinkFulfillment must be used.
+   */
+  function fulfillBytes(bytes32 requestId, bytes memory bytesData) public recordChainlinkFulfillment(requestId) {
+    emit RequestFulfilled(requestId, bytesData);
+    data = bytesData;
+    image_url = string(data);
+  }
+
+}
