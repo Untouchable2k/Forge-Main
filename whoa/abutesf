@@ -46,21 +46,13 @@ contract APIConsumer is ChainlinkClient {
     function requestVolumeData() public returns (bytes32 requestId) 
     {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
-        
-        // Set the URL to perform the GET request on
-        request.add("get", url);
+        request.add("get", "https://1e68b62e-578e-4390-bf43-6b70a92a23b6.mock.pstmn.io/get");
         
         // Set the path to find the desired data in the API response, where the response format is:
-        // {"RAW":
-        //   {"ETH":
-        //    {"USD":
-        //     {
-        //      "VOLUME24HOUR": xxx.xxx,
-        //     }
-        //    }
-        //   }
+        // {"USD":243.33}
+        request.add("path", "0.Name");
+        
         //  }
-        request.add("path", path);
         
         // Multiply the result by 1000000000000000000 to remove decimals
         
