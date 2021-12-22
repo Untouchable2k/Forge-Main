@@ -8,7 +8,7 @@ Your 0xBTC Deposited into Auction / Total 0xBTC for Auction * 8,192 = Your Forge
 100% Fair based on amount of 0xBitcoin spent at that auction. 
 All tracked and stored decentrally and trustlessly!
 
-25% of the Forge Token Supply is distributed by the LP Staking Contract
+25% of the Forge Token Supply is distributed by the Liquidity Provider Staking Contract
 The speed at which Stakers are rewarded will be deteremined by Proof-of-Work miners.  Fast miners = more rewards, slow miners = less rewards.
 The rewards are split fairly and disitributed over a period of time to all Stakers.  
 We are staking Forge/0xBitcoin Liquidiy Pool tokens.
