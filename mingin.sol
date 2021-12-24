@@ -10,15 +10,15 @@
 //
 // All distributions happen fairly using Bitcoins model of distribution for over 100+ years, on-chain, decentralized, trustless, ownerless contracts!
 //
-// Network: Optimstic Ethereum 
-// ChainID = 10
+// Network: Polygon Chain 
+// ChainID = 89
 //
 //
 // Name: Forge
 // Symbol: Frg
 // Decimals: 18 
 //
-// Total supply: 42,000,001.000000000000000000(Of Kovan Forge)
+// Total supply: 84,000,001.000000000000000000(Of Kovan Forge)
 //   =
 // 21,000,000 Mined over 100+ years using Bitcoins Distrubtion halvings every 4 years. Uses Proof-oF-Work to distribute the tokens. Public Miner is available.  Uses this contract.
 //   +
@@ -28,7 +28,7 @@
 //
 //  =
 //
-// 42,000,001 Tokens is the MAX Supply EVER.  Will never be more!
+// 42,000,001 Tokens is the max Supply for the first 150 years.  The next 10,000 years doubles that supply to 84,000,000.  To give people a chance in the future to be apart
 //      
 // 66% of the 0xBitcoin Token from this contract goes to the Miner to pay for the transaction cost and if the token grows enough earn 0xBitcoin per mint!!
 // 33% of the 0xBitcoin TOken from this contract goes to the Liquidity Providers via ForgeRewards Contract.  Helps prevent Impermant Loss! Larger Liquidity!
@@ -197,7 +197,6 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     uint public miningTarget2 = 0;
     
     bytes32 public challengeNumber;   //generate a new one when a new reward is minted
-    bytes32 public challengeNumber2;   //generate a new one when a new reward is minted
     uint public rewardEra = 0;
     uint public maxSupplyForEra = (_totalSupply - _totalSupply.div( 2**(rewardEra + 1)));
     uint public reward_amount = (150 * 10**uint(decimals) ).div( 2**rewardEra );
@@ -207,16 +206,13 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     uint256 one8unit   =              100000000;
     uint256 public Token2Per=         100000000;
     uint256 Token2Min=                100000000;
-    mapping(bytes32 => bytes32) solutionForChallenge;
-    bytes32[] public solutionsForChallenge2;
-    bytes32[] public eCounter;
-
-    
-    uint256 max = 0;
+    mapping(bytes32 => bytes32) public solutionForChallenge;
+    mapping(bytes32 => uint) public EpochForChallenge;
+    mapping(uint => bytes32) public ChallengeForEpoch;
     uint public tokensMinted;
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
-    mapping(address => uint) Token_balances;
+    //mapping(address => uint) Token_balances;
     uint give0xBTC = 0;
     uint give = 1;
     // metadata
@@ -232,13 +228,13 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
         // Only init once
         assert(!inited);
         inited = true;
-
-        
+	
+    	rewardEra = 0;
+	tokensMinted = 0;
         _totalSupply = 21000000 * 10**uint(18)/(2 ** totalLifetimes);
-        tokensMinted = 0;
+        maxSupplyForEra = (_totalSupply - _totalSupply.div( 2**(rewardEra + 1)));
     	//bitcoin commands short and sweet //sets to previous difficulty
     	miningTarget = Z_MAXIMUM_TARGET.div(1001); //5000000 = 31gh/s @ 7 min for FPGA mining, 2000000 if GPU only
-    	rewardEra = 0;
         //latestDifficultyPeriodStarted2 = block.timestamp;
     	
         reward_amount = (150 * 10**uint(decimals) ).div( 2**rewardEra ) / (2 ** totalLifetimes);
@@ -267,17 +263,7 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     ///
     // first
     
-
-function inputChal(bytes32 _chal) public{
-    challengeNumber =  _chal;
-    challengeNumber2 =  _chal;
-}
-function changeSolutions(bytes32 digest, uint xx)public {
-solutionsForChallenge2.push(digest);
-}
-function changetarget(uint xx)public {
-miningTarget2 = xx;
-}
+    
 function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
@@ -301,34 +287,26 @@ function ARewardSender() public {
 
 function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
     mintFor(nonce, challenge_digest, msg.sender);
-    eCounter[epochCount] = challengeNumber;
 }
 
 function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintfor) public returns (bool success) {
-            bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, mintfor, nonce));
-            A_digestz = digest;
+
+            bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
+
             //the challenge digest must match the expected
             require(digest == challenge_digest, "Old challenge_digest or wrong challenge_digest");
 
             //the digest must be smaller than the target
             require(uint256(digest) < miningTarget, "Digest must be smaller than miningTarget");
-            if(uint256(digest) < miningTarget2)
-            {
-                A_solutionx = digest;
-                A_noncex = nonce;
-                A_challenge_digestx = challenge_digest;
-            }
-            for(uint x=0; x< solutionsForChallenge2.length; x++)
-            {
-                require(solutionsForChallenge2[x] != digest, "NOT THE SAME DIGETS PLZ");
-            }
+                
 	        bytes32 solution = solutionForChallenge[challengeNumber];
+            require(solution == 0x0,"This Challenge was alreday mined by someone else");  //prevent the same answer from awarding twice
 	        solutionForChallenge[challengeNumber] = digest;
-            solutionsForChallenge2.push(digest);
-            max = max.add(1);
-
+	        EpochForChallenge[challengeNumber] = epochCount;
 
             //set readonly diagnostics data
+
+	        ChallengeForEpoch[epochCount] = challengeNumber;
 
              _startNewMiningEpoch();
             balances[msg.sender] = balances[msg.sender].add(reward_amount);
@@ -360,7 +338,7 @@ function mint2(uint256 nonce, bytes32 challenge_digest) public returns (bool suc
              _startNewMiningEpoch();
             balances[msg.sender] = balances[msg.sender].add(reward_amount);
             if(give0xBTC > 0){
-            IERC20(AddressZeroXBTC).transfer(msg.sender, Token2Per*give0xBTC);
+                 IERC20(AddressZeroXBTC).transfer(msg.sender, Token2Per*give0xBTC);
             }
             emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
            return true;
