@@ -1,10 +1,10 @@
 // Forge - Proof of Work Mining Contract
 // Distrubtion of Forge Token is as follows:
-// 25% of Forge Token is Auctioned in the ForgeAuctions Contract which distributes tokens to users who use Fantom to buy tokens in fair price. auctions that last 4 days. Using the Auctions contract
+// 25% of Forge Token is Auctioned in the ForgeAuctions Contract which distributes tokens to users who use 0xBitcoin to buy tokens in fair price. Each auction lasts ~3 days. Using the Auctions contract
 // +
 // 25% of Forge Token is distributed as Liquidiy Pool rewards in the ForgeRewards Contract which distributes tokens to users who deposit the SpiritSwap Liquidity Pool tokens into the LPRewards contract.
 // +
-// 50% of Forge Token is distributed using ForgeMining Contract(this Contract) which distributes tokens to users by using GPUs/FPGAs to solve a complicated problem to gain tokens!
+// 50% of Forge Token is distributed using ForgeMining Contract(this Contract) which distributes tokens to users by using GPUs/FPGAs to solve a complicated problem to gain tokens!  Uses this contract
 //
 // = 100% Of the Token is distributed to the users! No dev fee or premine!
 //
@@ -163,10 +163,6 @@ abstract contract ApproveAndCallFallBack {
 
 contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
 
-                bytes32 public A_solutionx;
-                uint256 public A_noncex;
-                bytes32 public A_challenge_digestx;
-                bytes32 public A_digestz;
 // SUPPORTING CONTRACTS
     address public AddressAuction;
     address public AddressLPReward;
@@ -416,12 +412,7 @@ function _startNewMiningEpoch() internal {
       if( tokensMinted.add((reward_amount)) > maxSupplyForEra && rewardEra < 39)
       {
         rewardEra = rewardEra + 1;
-        miningTarget = miningTarget.div(5);
-        if(rewardEra > 20){
-	    inited = false;
-            zinit(AddressAuction, AddressLPReward, AddressZeroXBTC);
-            totalLifetimes = totalLifetimes.add(1);
-        }
+        miningTarget = miningTarget.div(rewardEra + 2);
         
       }
 
