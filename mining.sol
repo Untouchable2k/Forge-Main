@@ -231,13 +231,10 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
 	
     	rewardEra = 0;
 	tokensMinted = 0;
-        _totalSupply = 21000000 * 10**uint(18)/(2 ** totalLifetimes);
-        maxSupplyForEra = (_totalSupply - _totalSupply.div( 2**(rewardEra + 1)));
     	//bitcoin commands short and sweet //sets to previous difficulty
     	miningTarget = Z_MAXIMUM_TARGET.div(1001); //5000000 = 31gh/s @ 7 min for FPGA mining, 2000000 if GPU only
         //latestDifficultyPeriodStarted2 = block.timestamp;
     	
-        reward_amount = (150 * 10**uint(decimals) ).div( 2**rewardEra ) / (2 ** totalLifetimes);
     	_startNewMiningEpoch();
     	tokensMinted = reward_amount * epochCount;
     	
@@ -301,11 +298,11 @@ function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintfor) publ
                 
 	        bytes32 solution = solutionForChallenge[challengeNumber];
             require(solution == 0x0,"This Challenge was alreday mined by someone else");  //prevent the same answer from awarding twice
+	    
+            //set blockchain data
+
 	        solutionForChallenge[challengeNumber] = digest;
 	        EpochForChallenge[challengeNumber] = epochCount;
-
-            //set readonly diagnostics data
-
 	        ChallengeForEpoch[epochCount] = challengeNumber;
 
              _startNewMiningEpoch();
@@ -441,7 +438,7 @@ function _startNewMiningEpoch() internal {
 
     if((epochCount % _BLOCKS_PER_READJUSTMENT== 0))
     {
-         if(( IERC20(AddressZeroXBTC).balanceOf(address(this)) / Token2Per) <= 10000)
+         if(( IERC20(AddressZeroXBTC).balanceOf(address(this)) / Token2Per) <= 20000)
          {
              if(Token2Per.div(2) > Token2Min)
              {
