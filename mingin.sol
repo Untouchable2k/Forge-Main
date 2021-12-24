@@ -268,7 +268,7 @@ function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     tokensMinted.add(reward_amount * epochsPast);
-    reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
+    reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra ) / (2 ** totalLifetimes);
     
     balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
     if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
@@ -416,11 +416,12 @@ function _startNewMiningEpoch() internal {
 
       //40 is the final reward era, almost all tokens minted
       //once the final era is reached, more tokens will not be given out because the assert function
-      if( tokensMinted.add((150 * 10**uint(decimals) ).div( 2**rewardEra )) > maxSupplyForEra && rewardEra < 39)
+      if( tokensMinted.add((reward_amount)) > maxSupplyForEra && rewardEra < 39)
       {
         rewardEra = rewardEra + 1;
-        miningTarget = miningTarget.div(31);
-        if(rewardEra > 36){
+        miningTarget = miningTarget.div(5);
+        if(rewardEra > 20){
+	    inited = false;
             zinit(AddressAuction, AddressLPReward, AddressZeroXBTC);
             totalLifetimes = totalLifetimes.add(1);
         }
