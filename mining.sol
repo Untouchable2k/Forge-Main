@@ -18,7 +18,7 @@
 // Symbol: Frg
 // Decimals: 18 
 //
-// Total supply: 84,000,001.000000000000000000(Of Kovan Forge)
+// Total supply: 42,000,001.000000000000000000(Of Kovan Forge)
 //   =
 // 21,000,000 Mined over 100+ years using Bitcoins Distrubtion halvings every 4 years. Uses Proof-oF-Work to distribute the tokens. Public Miner is available.  Uses this contract.
 //   +
@@ -28,7 +28,7 @@
 //
 //  =
 //
-// 42,000,001 Tokens is the max Supply for the first 150 years.  The next 10,000 years doubles that supply to 84,000,000.  To give people a chance in the future to be apart
+// 42,000,001 Tokens is the max Supply for the first 150 year
 //      
 // 66% of the 0xBitcoin Token from this contract goes to the Miner to pay for the transaction cost and if the token grows enough earn 0xBitcoin per mint!!
 // 33% of the 0xBitcoin TOken from this contract goes to the Liquidity Providers via ForgeRewards Contract.  Helps prevent Impermant Loss! Larger Liquidity!
