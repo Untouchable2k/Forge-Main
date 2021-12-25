@@ -261,8 +261,7 @@ function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
-    
-    balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
+
     if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (6 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
     {
         give0xBTC = 1 * give;
@@ -302,25 +301,19 @@ function mintTo(uint256 nonce, bytes32 challenge_digest,  address mintTo) public
 	        ChallengeForEpoch[epochCount] = challengeNumber;
 		_startNewMiningEpoch();
         	uint diff = block.timestamp - previousBlockTime;
+		
+		uint x = 4;
 		if(diff  > targetTime)
 		{
-			uint x = 4;
 			for(x = 4; x< 10; x++){
 			if(block.timestamp - previousBlockTime <= (targetTime * x).div(3)){
 			 	break;
 			}}
-			
-			balances[mintTo] = balances[mintTo].add((x * reward_amount).div(4));
-			tokensMinted = tokensMinted.add((x * reward_amount).div(4) );
 		}
-		else
-		{
-			balances[mintTo] = balances[mintTo].add(reward_amount);
-			tokensMinted = tokensMinted.add(reward_amount);
-		}
-		
-	    
-	    
+		balances[mintTo] = balances[mintTo].add((x * reward_amount).div(4));
+		tokensMinted = tokensMinted.add((x * reward_amount).div(4) );
+	
+	    balances[AddressLPReward] = balances[AddressLPReward].add((x * reward_amount).div(8));
             previousBlockTime = block.timestamp;
             if(give0xBTC > 0){
             IERC20(AddressZeroXBTC).transfer(msg.sender, Token2Per*give0xBTC);
