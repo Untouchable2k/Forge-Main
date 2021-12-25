@@ -18,7 +18,7 @@
 // Symbol: Frg
 // Decimals: 18 
 //
-// Total supply: 42,000,001.000000000000000000(Of Kovan Forge)
+// Total supply: 42,000,001.000000000000000000
 //   =
 // 21,000,000 Mined over 100+ years using Bitcoins Distrubtion halvings every 4 years. Uses Proof-oF-Work to distribute the tokens. Public Miner is available.  Uses this contract.
 //   +
