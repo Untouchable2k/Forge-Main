@@ -311,11 +311,12 @@ function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintTo) publi
 			if(block.timestamp - previousBlockTime <= (targetTime * x).div(3)){
 			 	break;
 			}}
-			balances[msg.sender] = balances[mintTo].add((reward_amount*x).div(4));
+			
+			balances[mintTo] = balances[mintTo].add((x * reward_amount).div(4));
 		}
 		else
 		{
-			balances[msg.sender] = balances[mintTo].add(reward_amount);
+			balances[mintTo] = balances[mintTo].add(reward_amount);
 		}
 		
 	    
@@ -421,7 +422,7 @@ function _startNewMiningEpoch() internal {
       //every so often, readjust difficulty. Dont readjust when deploying
     if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 4) == 0)
     {
-        ARewardSender();
+        	ARewardSender();
 		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
 
     if((epochCount % _BLOCKS_PER_READJUSTMENT== 0))
