@@ -184,14 +184,13 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     uint public latestDifficultyPeriodStarted2 = block.timestamp;
     uint public epochCount = 0;//number of 'blocks' mined
 
-    uint public _BLOCKS_PER_READJUSTMENT = 512;
+    uint public _BLOCKS_PER_READJUSTMENT = 256;
 
     //a little number
     uint public  Z_MINIMUM_TARGET = 2**16;
     
     uint public  Z_MAXIMUM_TARGET = 2**234;
     uint public miningTarget = Z_MAXIMUM_TARGET.div(200000000000*25);  //1000 million difficulty to start until i enable mining
-    uint public miningTarget2 = 0;
     
     bytes32 public challengeNumber;   //generate a new one when a new reward is minted
     uint public rewardEra = 0;
@@ -203,7 +202,7 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     uint oneEthUnit =    1000000000000000000;
     uint one8unit   =              100000000;
     uint public Token2Per=         100000000;
-    uint Token2Min=                100000000;
+    uint Token2Min=                       10;
     mapping(bytes32 => bytes32) public solutionForChallenge;
     mapping(bytes32 => uint) public EpochForChallenge;
     mapping(uint => bytes32) public ChallengeForEpoch;
