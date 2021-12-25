@@ -281,7 +281,7 @@ function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool succ
     mintFor(nonce, challenge_digest, msg.sender);
 }
 
-function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintTo) public returns (bool success) {
+function mintTo(uint256 nonce, bytes32 challenge_digest,  address mintTo) public returns (bool success) {
 
     		tokensMinted.add(reward_amount);
             bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
@@ -354,7 +354,7 @@ function mintTokensArrayTo(uint256 nonce, bytes32 challenge_digest, address[] me
 
     	}
 	
-    require(mintFor(nonce,challenge_digest, MintTo[0]), "mint issue");
+    require(mintTo(nonce,challenge_digest, MintTo[0]), "mint issue");
 
     
     uint savex=0;
