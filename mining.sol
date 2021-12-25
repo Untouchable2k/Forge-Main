@@ -162,6 +162,7 @@ abstract contract ApproveAndCallFallBack {
 //Main contract
 
 contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
+	uint constant public targetTime = 36 * 60; //= 36 minutes
 
 // SUPPORTING CONTRACTS
     address public AddressAuction;
@@ -197,11 +198,12 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     uint public maxSupplyForEra = (_totalSupply - _totalSupply.div( 2**(rewardEra + 1)));
     uint public reward_amount = (150 * 10**uint(decimals) ).div( 2**rewardEra );
     //Stuff for Functions
-    uint256 oldecount = 0;
-    uint256 oneEthUnit =    1000000000000000000;
-    uint256 one8unit   =              100000000;
-    uint256 public Token2Per=         100000000;
-    uint256 Token2Min=                100000000;
+    uint oldecount = 0;
+    uint previousBlockTime = block.timestamp
+    uint oneEthUnit =    1000000000000000000;
+    uint one8unit   =              100000000;
+    uint public Token2Per=         100000000;
+    uint Token2Min=                100000000;
     mapping(bytes32 => bytes32) public solutionForChallenge;
     mapping(bytes32 => uint) public EpochForChallenge;
     mapping(uint => bytes32) public ChallengeForEpoch;
@@ -299,49 +301,47 @@ function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintfor) publ
 
 	        solutionForChallenge[challengeNumber] = digest;
 	        EpochForChallenge[challengeNumber] = epochCount;
+		previousBlockTime = block.timestamp;
 	        ChallengeForEpoch[epochCount] = challengeNumber;
-
-             _startNewMiningEpoch();
-            balances[msg.sender] = balances[msg.sender].add(reward_amount);
+		_startNewMiningEpoch();
+		if(block.timestamp - previousBlockTime  > 36))
+		{
+			uint x = 4;
+			for(x = 4; x< 10; x++{
+			if(ethBlocksSinceLastDifficultyPeriod2 <= (targetTime * x).div(3)){
+			 	break;
+			}
+			balances[msg.sender] = balances[mintfor].add((reward_amount*x).div(4);
+		}
+		else
+		{
+			balances[msg.sender] = balances[mintfor].add(reward_amount);
+		}
+		
+            balances[msg.sender] = balances[mintfor].add(reward_amount);
+	    
+	    
+            previousBlockTime = block.timestamp;
             if(give0xBTC > 0){
             IERC20(AddressZeroXBTC).transfer(msg.sender, Token2Per*give0xBTC);
-            }
-            emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
+           }
+           emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
            return true;
 }
-
-//Mints to the payee Forge, 0xBitcoin always to the sender. Making it the heaviest currency in here.
-function mint2(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
-            bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
-
-            //the challenge digest must match the expected
-            require(digest == challenge_digest, "Old challenge_digest or wrong challenge_digest");
-
-            //the digest must be smaller than the target
-            require(uint256(digest) < miningTarget, "Digest must be smaller than miningTarget");
-                
-	        bytes32 solution = solutionForChallenge[challengeNumber];
-            //require(solution == 0x0,"This Challenge was alreday mined by someone else");  //prevent the same answer from awarding twice
-	        solutionForChallenge[challengeNumber] = digest;
-            //solutionsForChallenge2[max] = digest;
-            max = max.add(1);
-
-            //set readonly diagnostics data
-
-             _startNewMiningEpoch();
-            balances[msg.sender] = balances[msg.sender].add(reward_amount);
-            if(give0xBTC > 0){
-                 IERC20(AddressZeroXBTC).transfer(msg.sender, Token2Per*give0xBTC);
-            }
-            emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
-           return true;
-}
-
 
 //First address for mintSend(Forge + 0xBitcoin), Second address+ for other tokens
 // REPALCE WITH LINE BELOW in production
 //function mintExtrasTokenMintTo(uint256 nonce, bytes32 challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
 function mintTokensArrayTo(uint256 nonce, bytes32 challenge_digest, address[] memory ExtraFunds, address[] memory MintTo, address MINTFOR) public returns (bool success) {
+		uint x = 4;
+		if(block.timestamp - previousBlockTime  > 36))
+		{
+			for(x = 4; x< 10; x++{
+			if(ethBlocksSinceLastDifficultyPeriod2 <= (targetTime * x).div(3)){
+			 	break;
+			}
+			
+		}
         require(MintTo.length == ExtraFunds.length + 1,"So MintTo has to have same number of addressses as ExtraFunds");
        for(uint x=0; x< ExtraFunds.length; x++)
         {
@@ -351,7 +351,9 @@ function mintTokensArrayTo(uint256 nonce, bytes32 challenge_digest, address[] me
                 require(ExtraFunds[y] != ExtraFunds[x] || x == y, "No printing The same tokens");
             }
 
-    }
+    	}
+	
+    require(mintFor(nonce,challenge_digest, MINTFOR), "mint issue");
     uint savex=0;
     for(uint x=0; x<ExtraFunds.length; x++)
     {
@@ -362,19 +364,13 @@ uint256 TotalOwned = IERC20(ExtraFunds[x]).balanceOf(address(this));
     {
         uint256 totalOwed = 0;
         if( x % 3 == 0 && x != 0){
-            totalOwed = (TotalOwned).divRound(10000);
+            totalOwed = (TotalOwned*x).divRound(4*10000);
         }
         else{
-            totalOwed = (TotalOwned).div(10000);  //10000 was chosen to give each token a ~a year per token of distribution using Proof-of-Work
+            totalOwed = (TotalOwned*x).div(4*10000);  //10000 was chosen to give each token a ~a year per token of distribution using Proof-of-Work
         }
-        //Keep the NFTs for miners hard to split with rewards, 25% to LPers
-        if(TotalOwned > 210005){
-            IERC20(ExtraFunds[x]).transfer(AddressLPReward, totalOwed.div(3));
             IERC20(ExtraFunds[x]).transfer(MintTo[x], totalOwed);
-        }
-        else{
-            IERC20(ExtraFunds[x]).transfer(MintTo[x], totalOwed);
-        }
+        
     }
     savex = x;
     }
@@ -382,7 +378,6 @@ uint256 TotalOwned = IERC20(ExtraFunds[x]).balanceOf(address(this));
         
     }
     
-    require(mintFor(nonce,challenge_digest, MINTFOR), "mint issue");
     emit MegaMint(msg.sender, reward_amount, epochCount, challengeNumber, savex );
     return true;
 }
@@ -461,29 +456,21 @@ function _startNewMiningEpoch() internal {
 
         uint epochsMined = _BLOCKS_PER_READJUSTMENT; //256
 
-        uint targetTime = 60*36; //36 min per block 60 sec * 12
-	
-        if( ethBlocksSinceLastDifficultyPeriod2 > (targetTime*3).div(2) && give != 2 )
-	{
-		give = 2;
-	}
-	else if(give != 1)
-	{
-		give = 1;
-	}
-        //if there were less eth blocks passed in time than expected
-        if( ethBlocksSinceLastDifficultyPeriod2 < targetTime )
-        {
-          uint excess_block_pct = (targetTime.mult(100)).div( ethBlocksSinceLastDifficultyPeriod2 );
+        uint adjusDifftTargetTime = targetTime * epochsMined; //36 min per block 60 sec * 12
 
+        //if there were less eth blocks passed in time than expected
+        if( ethBlocksSinceLastDifficultyPeriod2 < adjustDiffTargetTime )
+        {
+          uint excess_block_pct = (adjustDiffTargetTime.mult(100)).div( ethBlocksSinceLastDifficultyPeriod2 );
+	give = 1;
           uint excess_block_pct_extra = excess_block_pct.sub(100).limitLessThan(1000);
           // If there were 5% more blocks mined than expected then this is 5.  If there were 100% more blocks mined than expected then this is 100.
 
           //make it harder q
           miningTarget = miningTarget.sub(miningTarget.div(2000).mult(excess_block_pct_extra));   //by up to 50 %
         }else{
-          uint shortage_block_pct = (ethBlocksSinceLastDifficultyPeriod2.mult(100)).div( targetTime );
-
+          uint shortage_block_pct = (ethBlocksSinceLastDifficultyPeriod2.mult(100)).div( adjustDiffTargetTime );
+	give = 2;
           uint shortage_block_pct_extra = shortage_block_pct.sub(100).limitLessThan(1000); //always between 0 and 1000
           //make it easier
           miningTarget = miningTarget.add(miningTarget.div(2000).mult(shortage_block_pct_extra));   //by up to 50 %
