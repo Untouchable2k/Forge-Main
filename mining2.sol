@@ -261,7 +261,7 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
 function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
-    reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra ) / (2 ** totalLifetimes);
+    reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra );
     
     balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
     if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
