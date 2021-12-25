@@ -30,8 +30,8 @@
 //
 // 42,000,001 Tokens is the max Supply
 //      
-// 66% of the 0xBitcoin Token from this contract goes to the Miner to pay for the transaction cost and if the token grows enough earn 0xBitcoin per mint!!
-// 33% of the 0xBitcoin TOken from this contract goes to the Liquidity Providers via ForgeRewards Contract.  Helps prevent Impermant Loss! Larger Liquidity!
+// 50% of the 0xBitcoin Token from this contract goes to the Miner to pay for the transaction cost and if the token grows enough earn 0xBitcoin per mint!!
+// 50% of the 0xBitcoin TOken from this contract goes to the Liquidity Providers via ForgeRewards Contract.  Helps prevent Impermant Loss! Larger Liquidity!
 //
 // No premine, dev cut, or advantage taken at launch. Public miner available at launch.  100% of the token is given away fairly over 100+ years using Bitcoins model!
 //
@@ -260,16 +260,16 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     
     
 function ARewardSender() public {
-    //runs every _BLOCKS_PER_READJUSTMENT / 4
+    //runs at least every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     tokensMinted.add(reward_amount * epochsPast);
     reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra ) / (2 ** totalLifetimes);
     
     balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
-    if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
+    if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (6 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
     {
         give0xBTC = 1 * give;
-        IERC20(AddressZeroXBTC).transfer(AddressLPReward, ((epochsPast) * Token2Per)/2);
+        IERC20(AddressZeroXBTC).transfer(AddressLPReward, ((epochsPast) * Token2Per));
     }
     else{
         give0xBTC = 0;
