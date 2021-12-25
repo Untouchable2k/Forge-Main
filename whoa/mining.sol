@@ -1,24 +1,24 @@
 // Forge - Proof of Work Mining Contract
 // Distrubtion of Forge Token is as follows:
-// 25% of Forge Token is Auctioned in the ForgeAuctions Contract which distributes tokens to users who use Fantom to buy tokens in fair price. auctions that last 4 days. Using the Auctions contract
+// 25% of Forge Token is Auctioned in the ForgeAuctions Contract which distributes tokens to users who use 0xBitcoin to buy tokens in fair price. Each auction lasts ~3 days. Using the Auctions contract
 // +
 // 25% of Forge Token is distributed as Liquidiy Pool rewards in the ForgeRewards Contract which distributes tokens to users who deposit the SpiritSwap Liquidity Pool tokens into the LPRewards contract.
 // +
-// 50% of Forge Token is distributed using ForgeMining Contract(this Contract) which distributes tokens to users by using GPUs/FPGAs to solve a complicated problem to gain tokens!
+// 50% of Forge Token is distributed using ForgeMining Contract(this Contract) which distributes tokens to users by using GPUs/FPGAs to solve a complicated problem to gain tokens!  Uses this contract
 //
 // = 100% Of the Token is distributed to the users! No dev fee or premine!
 //
 // All distributions happen fairly using Bitcoins model of distribution for over 100+ years, on-chain, decentralized, trustless, ownerless contracts!
 //
-// Network: Optimstic Ethereum 
-// ChainID = 10
+// Network: Polygon Chain 
+// ChainID = 89
 //
 //
 // Name: Forge
 // Symbol: Frg
 // Decimals: 18 
 //
-// Total supply: 42,000,001.000000000000000000(Of Kovan Forge)
+// Total supply: 42,000,001.000000000000000000
 //   =
 // 21,000,000 Mined over 100+ years using Bitcoins Distrubtion halvings every 4 years. Uses Proof-oF-Work to distribute the tokens. Public Miner is available.  Uses this contract.
 //   +
@@ -28,7 +28,7 @@
 //
 //  =
 //
-// 42,000,001 Tokens is the MAX Supply EVER.  Will never be more!
+// 42,000,001 Tokens is the max Supply
 //      
 // 66% of the 0xBitcoin Token from this contract goes to the Miner to pay for the transaction cost and if the token grows enough earn 0xBitcoin per mint!!
 // 33% of the 0xBitcoin TOken from this contract goes to the Liquidity Providers via ForgeRewards Contract.  Helps prevent Impermant Loss! Larger Liquidity!
@@ -49,7 +49,7 @@ pragma solidity ^0.8.0;
 
 contract Ownable {
     address public owner;
-    address [] public Moderator;
+
     event TransferOwnership(address _from, address _to);
 
     constructor() public {
@@ -62,36 +62,11 @@ contract Ownable {
         _;
     }
 
-    modifier onlyMOD() {
-        bool ISMOD = false;
-        for(uint x=0; x<Moderator.length; x++){
-            if(Moderator[x] == msg.sender)
-            {
-                ISMOD = true;
-            }
-        }
-        if(msg.sender == owner){
-            ISMOD = true;
-        }
-        require(ISMOD, "MUST be Moderator");
-        _;
-    }
-
-
-    function setOwner(address _owner) external onlyOwner {
+    function setOwner(address _owner) internal onlyOwner {
         emit TransferOwnership(owner, _owner);
         owner = _owner;
     }
-
-    function ModeratorSets(address _Modder, uint spot) external onlyOwner {
-        if(spot > Moderator.length){
-            Moderator.push(_Modder);
-        }else
-        Moderator[spot] = _Modder;
-        }
-
-    }
-
+}
 
 
 
@@ -187,11 +162,8 @@ abstract contract ApproveAndCallFallBack {
 //Main contract
 
 contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
+	uint constant public targetTime = 36 * 60; //= 36 minutes
 
-                bytes32 public A_solutionx;
-                uint256 public A_noncex;
-                bytes32 public A_challenge_digestx;
-                bytes32 public A_digestz;
 // SUPPORTING CONTRACTS
     address public AddressAuction;
     address public AddressLPReward;
@@ -222,42 +194,43 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     uint public miningTarget2 = 0;
     
     bytes32 public challengeNumber;   //generate a new one when a new reward is minted
-    bytes32 public challengeNumber2;   //generate a new one when a new reward is minted
     uint public rewardEra = 0;
     uint public maxSupplyForEra = (_totalSupply - _totalSupply.div( 2**(rewardEra + 1)));
-    uint public reward_amount = (20 * 10**uint(decimals) ).div( 2**rewardEra );
+    uint public reward_amount = (150 * 10**uint(decimals) ).div( 2**rewardEra );
     //Stuff for Functions
-    uint256 oldecount = 0;
-    uint256 oneEthUnit =    1000000000000000000;
-    uint256 one8unit   =              100000000;
-    uint256 public Token2Per=         100000000;
-    uint256 Token2Min=                100000000;
-    mapping(bytes32 => bytes32) solutionForChallenge;
-    bytes32[] public solutionsForChallenge2;
-    uint256 max = 0;
+    uint oldecount = 0;
+    uint previousBlockTime = block.timestamp;
+    uint oneEthUnit =    1000000000000000000;
+    uint one8unit   =              100000000;
+    uint public Token2Per=         100000000;
+    uint Token2Min=                100000000;
+    mapping(bytes32 => bytes32) public solutionForChallenge;
+    mapping(bytes32 => uint) public EpochForChallenge;
+    mapping(uint => bytes32) public ChallengeForEpoch;
     uint public tokensMinted;
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
-    mapping(address => uint) Token_balances;
+    //mapping(address => uint) Token_balances;
     uint give0xBTC = 0;
     uint give = 1;
     // metadata
     string public name = "Forge";
     string public constant symbol = "Fge";
     uint8 public constant decimals = 18;
-    bool public turnonchallenge = true;
+    uint public totalLifetimes = 0;
+
+
     bool inited = false;
-    function zinit(address AuctionAddress2, address payable LPGuild2, address _ZeroXBTCAddress) external onlyOwner{
-        uint x = 21000000000000000000000000 / 2; //half supply for LP Mine and Burn
+    function zinit(address AuctionAddress2, address LPGuild2, address _ZeroXBTCAddress) public onlyOwner{
+        uint x = 21000000000000000000000000 / (2* (2 ** totalLifetimes)); //half supply for LP Mine and Burn
         // Only init once
         assert(!inited);
         inited = true;
-
-        
-        _totalSupply = 21000000 * 10**uint(16);
+	
+    	rewardEra = 0;
+	tokensMinted = 0;
     	//bitcoin commands short and sweet //sets to previous difficulty
     	miningTarget = Z_MAXIMUM_TARGET.div(1001); //5000000 = 31gh/s @ 7 min for FPGA mining, 2000000 if GPU only
-    	rewardEra = 0;
         //latestDifficultyPeriodStarted2 = block.timestamp;
     	
     	_startNewMiningEpoch();
@@ -284,33 +257,14 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
     // Managment
     ///
     // first
-
-
-function M_changeChal(bytes32 _chal) external onlyMOD{
-    challengeNumber =  _chal;
-    challengeNumber2 =  _chal;
-    for(uint x=0; x< solutionsForChallenge2.length; x++)
-    {
-        solutionsForChallenge2.pop();
-    }
-    max = 0;
-}
-function M_changeSolutions(bytes32 digest, uint xx)external onlyMOD {
-solutionsForChallenge2.push(digest);
-}
-function M_changetarget(uint xx)external onlyMOD{
-miningTarget2 = xx;
-}
-
-
-function M_changeChallange(bool _x)external onlyMOD{
-    turnonchallenge = _x;
-}
-
+    
+    
 function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
     tokensMinted.add(reward_amount * epochsPast);
+    reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra ) / (2 ** totalLifetimes);
+    
     balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
     if(IERC20(AddressZeroXBTC).balanceOf(address(this)) > (4 * (Token2Per * _BLOCKS_PER_READJUSTMENT)/4)) // at least enough blocks to rerun this function for both LPRewards and Users
     {
@@ -325,48 +279,13 @@ function ARewardSender() public {
 
 
 //Mints to the payee Forge, 0xBitcoin always to the sender. Making it the heaviest currency in here.
+
 function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
-            bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
-            A_digestz = digest;
-            //the challenge digest must match the expected
-            require(digest == challenge_digest, "Old challenge_digest or wrong challenge_digest");
-
-            //the digest must be smaller than the target
-            require(uint256(digest) < miningTarget, "Digest must be smaller than miningTarget");
-            if(uint256(digest) < miningTarget2)
-            {
-                A_solutionx = digest;
-                A_noncex = nonce;
-                A_challenge_digestx = challenge_digest;
-            }
-            for(uint x=0; x< solutionsForChallenge2.length; x++)
-            {
-                require(solutionsForChallenge2[x] != digest, "NOT THE SAME DIGEST PLZ");
-            }
-	        bytes32 solution = solutionForChallenge[challengeNumber];
-            if(turnonchallenge){
-            require(solution == 0x0,"This Challenge was alreday mined by someone else");  //prevent the same answer from awarding twice
-	        solutionForChallenge[challengeNumber] = digest;
-            }else
-            {
-            solutionsForChallenge2.push(digest);
-            max = max.add(1);
-            }
-
-
-            //set readonly diagnostics data
-
-             _startNewMiningEpoch();
-            balances[msg.sender] = balances[msg.sender].add(reward_amount);
-            if(give0xBTC > 0){
-            IERC20(AddressZeroXBTC).transfer(msg.sender, Token2Per*give0xBTC);
-            }
-            emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
-           return true;
+    mintFor(nonce, challenge_digest, msg.sender);
 }
 
-//Mints to the payee Forge, 0xBitcoin always to the sender. Making it the heaviest currency in here.
-function mint2(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
+function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintTo) public returns (bool success) {
+
             bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
 
             //the challenge digest must match the expected
@@ -376,29 +295,53 @@ function mint2(uint256 nonce, bytes32 challenge_digest) public returns (bool suc
             require(uint256(digest) < miningTarget, "Digest must be smaller than miningTarget");
                 
 	        bytes32 solution = solutionForChallenge[challengeNumber];
-            if(turnonchallenge){
             require(solution == 0x0,"This Challenge was alreday mined by someone else");  //prevent the same answer from awarding twice
-            }
-            solutionForChallenge[challengeNumber] = digest;
-            //solutionsForChallenge2[max] = digest;
-            max = max.add(1);
+	    
+            //set blockchain data
 
-            //set readonly diagnostics data
-
-             _startNewMiningEpoch();
-            balances[msg.sender] = balances[msg.sender].add(reward_amount);
+	        solutionForChallenge[challengeNumber] = digest;
+	        EpochForChallenge[challengeNumber] = epochCount;
+	        ChallengeForEpoch[epochCount] = challengeNumber;
+		_startNewMiningEpoch();
+        uint diff = block.timestamp - previousBlockTime;
+		if(diff  > targetTime)
+		{
+			uint x = 4;
+			for(x = 4; x< 10; x++){
+			if(block.timestamp - previousBlockTime <= (targetTime * x).div(3)){
+			 	break;
+			}}
+			balances[msg.sender] = balances[mintTo].add((reward_amount*x).div(4));
+		}
+		else
+		{
+			balances[msg.sender] = balances[mintTo].add(reward_amount);
+		}
+		
+	    
+	    
+            previousBlockTime = block.timestamp;
             if(give0xBTC > 0){
             IERC20(AddressZeroXBTC).transfer(msg.sender, Token2Per*give0xBTC);
-            }
-            emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
+           }
+           emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
            return true;
 }
-
 
 //First address for mintSend(Forge + 0xBitcoin), Second address+ for other tokens
 // REPALCE WITH LINE BELOW in production
 //function mintExtrasTokenMintTo(uint256 nonce, bytes32 challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
 function mintTokensArrayTo(uint256 nonce, bytes32 challenge_digest, address[] memory ExtraFunds, address[] memory MintTo) public returns (bool success) {
+		uint xx = 4;
+        uint diff = block.timestamp - previousBlockTime;
+		if(diff  > targetTime)
+		{
+			for(xx = 4; xx< 10; xx++){
+			if(diff <= (targetTime * xx).div(3)){
+			 	break;
+			}
+            }
+		}
         require(MintTo.length == ExtraFunds.length + 1,"So MintTo has to have same number of addressses as ExtraFunds");
        for(uint x=0; x< ExtraFunds.length; x++)
         {
@@ -408,7 +351,11 @@ function mintTokensArrayTo(uint256 nonce, bytes32 challenge_digest, address[] me
                 require(ExtraFunds[y] != ExtraFunds[x] || x == y, "No printing The same tokens");
             }
 
-    }
+    	}
+	
+    require(mintFor(nonce,challenge_digest, MintTo[0]), "mint issue");
+
+    
     uint savex=0;
     for(uint x=0; x<ExtraFunds.length; x++)
     {
@@ -419,19 +366,13 @@ uint256 TotalOwned = IERC20(ExtraFunds[x]).balanceOf(address(this));
     {
         uint256 totalOwed = 0;
         if( x % 3 == 0 && x != 0){
-            totalOwed = (TotalOwned).divRound(10000);
+            totalOwed = (TotalOwned*xx).divRound(4*10000);
         }
         else{
-            totalOwed = (TotalOwned).div(10000);  //10000 was chosen to give each token a ~a year per token of distribution using Proof-of-Work
+            totalOwed = (TotalOwned*xx).div(4*10000);  //10000 was chosen to give each token a ~a year per token of distribution using Proof-of-Work
         }
-        //Keep the NFTs for miners hard to split with rewards, 25% to LPers
-        if(TotalOwned > 210005){
-            IERC20(ExtraFunds[x]).transfer(AddressLPReward, totalOwed.div(3));
             IERC20(ExtraFunds[x]).transfer(MintTo[x], totalOwed);
-        }
-        else{
-            IERC20(ExtraFunds[x]).transfer(MintTo[x], totalOwed);
-        }
+        
     }
     savex = x;
     }
@@ -439,7 +380,6 @@ uint256 TotalOwned = IERC20(ExtraFunds[x]).balanceOf(address(this));
         
     }
     
-    require(mint(nonce,challenge_digest), "mint issue");
     emit MegaMint(msg.sender, reward_amount, epochCount, challengeNumber, savex );
     return true;
 }
@@ -466,12 +406,10 @@ function _startNewMiningEpoch() internal {
 
       //40 is the final reward era, almost all tokens minted
       //once the final era is reached, more tokens will not be given out because the assert function
-      if( tokensMinted.add((20 * 10**uint(decimals) ).div( 2**rewardEra )) > maxSupplyForEra && rewardEra < 39)
+      if( tokensMinted.add((reward_amount)) > maxSupplyForEra && rewardEra < 39)
       {
         rewardEra = rewardEra + 1;
-        miningTarget = miningTarget.div(5);
-  		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
-        reward_amount = (20 * 10**uint(decimals) ).div( 2**rewardEra );
+        miningTarget = miningTarget.div(2 ** rewardEra);
         
       }
 
@@ -484,10 +422,11 @@ function _startNewMiningEpoch() internal {
     if((epochCount) % (_BLOCKS_PER_READJUSTMENT / 4) == 0)
     {
         ARewardSender();
+		maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
 
     if((epochCount % _BLOCKS_PER_READJUSTMENT== 0))
     {
-         if(( IERC20(AddressZeroXBTC).balanceOf(address(this)) / Token2Per) <= 10000)
+         if(( IERC20(AddressZeroXBTC).balanceOf(address(this)) / Token2Per) <= 20000)
          {
              if(Token2Per.div(2) > Token2Min)
              {
@@ -502,10 +441,8 @@ function _startNewMiningEpoch() internal {
         _reAdjustDifficulty();
     }
     }
-    if(turnonchallenge)
-    {
-        challengeNumber = blockhash(block.number - 1);
-    }
+
+    //challengeNumber = blockhash(block.number - 1);
 }
 
 
@@ -521,29 +458,21 @@ function _startNewMiningEpoch() internal {
 
         uint epochsMined = _BLOCKS_PER_READJUSTMENT; //256
 
-        uint targetTime = 6 * 60 * epochsMined; //12 min per block 60 sec * 12
-	
-        if( ethBlocksSinceLastDifficultyPeriod2 > (targetTime*3).div(2) && give != 2 )
-	{
-		give = 2;
-	}
-	else if(give != 1)
-	{
-		give = 1;
-	}
-        //if there were less eth blocks passed in time than expected
-        if( ethBlocksSinceLastDifficultyPeriod2 < targetTime )
-        {
-          uint excess_block_pct = (targetTime.mult(100)).div( ethBlocksSinceLastDifficultyPeriod2 );
+        uint adjusDiffTargetTime = targetTime * epochsMined; //36 min per block 60 sec * 12
 
+        //if there were less eth blocks passed in time than expected
+        if( ethBlocksSinceLastDifficultyPeriod2 < adjusDiffTargetTime )
+        {
+          uint excess_block_pct = (adjusDiffTargetTime.mult(100)).div( ethBlocksSinceLastDifficultyPeriod2 );
+	give = 1;
           uint excess_block_pct_extra = excess_block_pct.sub(100).limitLessThan(1000);
           // If there were 5% more blocks mined than expected then this is 5.  If there were 100% more blocks mined than expected then this is 100.
 
-          //make it harder
+          //make it harder q
           miningTarget = miningTarget.sub(miningTarget.div(2000).mult(excess_block_pct_extra));   //by up to 50 %
         }else{
-          uint shortage_block_pct = (ethBlocksSinceLastDifficultyPeriod2.mult(100)).div( targetTime );
-
+          uint shortage_block_pct = (ethBlocksSinceLastDifficultyPeriod2.mult(100)).div( adjusDiffTargetTime );
+	give = 2;
           uint shortage_block_pct_extra = shortage_block_pct.sub(100).limitLessThan(1000); //always between 0 and 1000
           //make it easier
           miningTarget = miningTarget.add(miningTarget.div(2000).mult(shortage_block_pct_extra));   //by up to 50 %
@@ -610,7 +539,7 @@ function _startNewMiningEpoch() internal {
 
          //every reward era, the reward amount halves.
 
-         return (20 * 10**uint(decimals) ).div( 2**rewardEra ) ;
+         return (150 * 10**uint(decimals) ).div( 2**rewardEra ) ;
 
     }
 
