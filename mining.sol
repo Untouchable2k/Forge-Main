@@ -234,7 +234,6 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
         //latestDifficultyPeriodStarted2 = block.timestamp;
     	
     	_startNewMiningEpoch();
-    	tokensMinted = reward_amount * epochCount;
     	
     	
         // Init contract variables and mint
@@ -262,7 +261,6 @@ contract ForgeMining is Ownable, IERC20, ApproveAndCallFallBack {
 function ARewardSender() public {
     //runs every _BLOCKS_PER_READJUSTMENT / 4
     uint256 epochsPast = epochCount - oldecount; //actually epoch
-    tokensMinted.add(reward_amount * epochsPast);
     reward_amount = (150 * 10**uint(decimals)).div( 2**rewardEra ) / (2 ** totalLifetimes);
     
     balances[AddressLPReward] = balances[AddressLPReward].add((reward_amount * epochsPast) / 2);
@@ -286,6 +284,7 @@ function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool succ
 
 function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintTo) public returns (bool success) {
 
+    		tokensMinted.add(reward_amount);
             bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
 
             //the challenge digest must match the expected
@@ -303,7 +302,7 @@ function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintTo) publi
 	        EpochForChallenge[challengeNumber] = epochCount;
 	        ChallengeForEpoch[epochCount] = challengeNumber;
 		_startNewMiningEpoch();
-        uint diff = block.timestamp - previousBlockTime;
+        	uint diff = block.timestamp - previousBlockTime;
 		if(diff  > targetTime)
 		{
 			uint x = 4;
@@ -313,10 +312,12 @@ function mintFor(uint256 nonce, bytes32 challenge_digest,  address mintTo) publi
 			}}
 			
 			balances[mintTo] = balances[mintTo].add((x * reward_amount).div(4));
+			tokensMinted = tokensMinted.add((x * reward_amount).div(4) );
 		}
 		else
 		{
 			balances[mintTo] = balances[mintTo].add(reward_amount);
+			tokensMinted = tokensMinted.add(reward_amount);
 		}
 		
 	    
