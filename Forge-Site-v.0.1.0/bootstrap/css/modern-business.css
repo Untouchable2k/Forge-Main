@@ -116,3 +116,11 @@ footer {
         height: 70%;
     }
 }
+
+.beauty {
+    text-align: center;
+}
+
+h4 .auction-pic {
+ content: url(img/gem.png);
+}
