@@ -47,6 +47,10 @@ body {
     color: #333;
 }
 
+.center {
+    display: block;
+    text-align: center;
+}
 
 /* Home Page Carousel */
 
