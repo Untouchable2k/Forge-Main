@@ -70,7 +70,6 @@
                             </li>
                         </ul>
                     </li>
-            
                         </ul>
             </div>
             <!-- class /.navbar-collapse -->
@@ -108,8 +107,99 @@
             <span class="icon-next"></span>
         </a>
     </header>
+
+    <!--Button to add Forge-->
+    <div class="text-center" style="padding:3%;margin:0%;">
+        <button class="enableEthereumButton22 btn">Click to Add PMBTC to Metamask</button><br><br></div>
+    <script>
+        
+    let accounts = [];
+    //Sending Ethereum to an address
+    //
+    const ethereumButton22 = document.querySelector('.enableEthereumButton22');
+    
+    ethereumButton22.addEventListener('click', () => {
+      getAccount22();
+    });
+    
+    ethereumButton.addEventListener('click', () => {
+      getAccount();
+    });
+    
+    async function getAccount() {
+      accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      showAccount.innerHTML = accounts;
+     console.log(accounts);
+    }
+        
+    
+    async function getAccount22() {
+            
+            
+    try {
+      await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x89' }],
+      });
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+          await ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{ chainId: '0x89', 
+            chainName: 'Polygon Mainnet',
+            nativeCurrency: {
+                name: 'MATIC',
+                symbol: 'MATIC', // 2-6 characters long
+                decimals: 18
+            },
+            blockExplorerUrls: ['https://polygonscan.com/'],
+            rpcUrls: ['https://polygon-rpc.com/'] }],
+          });
+        } catch (addError) {
+          // handle "add" error
+        }
+      }
+      // handle other "switch" errors
+    }		
+            
+            await new Promise(r => setTimeout(r, 20));
+    
+            
+      accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      const tokenAddress = '0x91DB156E6365de9bA8070d733F3163a48E6e3FC9';
+    const tokenSymbol = 'PMBTC';
+    const tokenDecimals = 9;
+    const tokenImage = 'https://raw.githubusercontent.com/CrazyCaptian/PMBTC_Extra/main/32x32pmbtc.png';
+    
+    try {
+      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+      const wasAdded = await ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20', // Initially only supports ERC20, but eventually more!
+          options: {
+            address: tokenAddress, // The address that the token is at.
+            symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+            decimals: tokenDecimals, // The number of decimals in the token
+            image: tokenImage, // A string url of the token logo
+          },
+        },
+      });
+    
+      if (wasAdded) {
+        console.log('Thanks for your interest!');
+      } else {
+        console.log('Your loss!');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+        }
+    </script>
     <!-- Page Content -->
-    <div class="container">
+    <div class="container" style="padding-top: 0%;margin-top: 0%;">
         <!-- Marketing Icons Section -->
             <div class="col-lg-12">
                <!-- Commented out for now <h1 class="page-header">
