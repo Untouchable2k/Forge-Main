@@ -180,7 +180,7 @@ footer.dogshit{
 }
 
 .btn-hover.color-1 {
-    background-image: linear-gradient(to right, #F1592A, grey, white, #F1592A);
+    background-image: linear-gradient(to right, #F1592A, #F1592A, white, #F1592A);
     box-shadow: 0 4px 15px 0 #F1592A;
 }
 .glowing {
@@ -191,10 +191,10 @@ footer.dogshit{
   }
   @-webkit-keyframes glowing {
     from {
-      box-shadow: 10 10 10px #fff, 0 0 20px #fff, 0 0 30px grey, 0 0 40px black, 0 0 50px grey, 0 0 60px grey, 0 0 70px black;
+      box-shadow: 5 5 5px #fff, 0 0 10px #fff, 0 0 10px grey, 0 0 20px black, 0 0 20px grey, 0 0 30px grey, 0 0 30px black;
     }
     to {
-      box-shadow: 0 0 20px #fff, 0 0 30px #F1592A, 0 0 40px #F1592A, 0 0 50px #F1592A, 0 0 60px #F1592A, 0 0 70px #F1592A, 0 0 80px #F1592A;
+      box-shadow: 0 0 5px #fff, 0 0 5px #F1592A, 0 0 5px #F1592A, 0 0 5px #F1592A, 0 0 10px #F1592A, 0 0 10px #F1592A, 0 0 10px #F1592A;
     }
   }
 
@@ -273,14 +273,14 @@ footer.dogshit{
   
 
   .footer-dark {
-    padding:50px 0;
+    padding:5px 0;
     color:#f0f9ff;
     background-color:#282d32;
   }
   
   .footer-dark h3 {
     margin-top:0;
-    margin-bottom:12px;
+    margin-bottom:10px;
     font-weight:bold;
     font-size:16px;
   }
