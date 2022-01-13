@@ -76,7 +76,7 @@
         </div>
         <!-- class /.container -->
     </nav>
-
+    
     <!--The Headers Carousel -->
     <header id="myCarousel" class="carousel slide">
         <!-- Indicators for switching slides -->
@@ -107,10 +107,20 @@
             <span class="icon-next"></span>
         </a>
     </header>
-
+    <div class="img-block">
+    <div class="x bounce">
+        <img class="y"  src="img/120x120 forge.png" alt="FORGE" />
+      </div>
+      <div class="el-wrap x bounce">
+        <div class="el y bounce"></div>
+      </div>
+      
     <!--Button to add Forge-->
     <div class="text-center" style="padding:3%;margin:0%;">
-        <button class="enableEthereumButton22 btn">Click to Add PMBTC to Metamask</button><br><br></div>
+        <button class="enableEthereumButton22 btn btn-hover color-1 glowing">Click to Add PMBTC to Metamask</button>
+        <br>
+        <br>
+    </div>
     <script>
         
     let accounts = [];
@@ -208,18 +218,26 @@
             </div>
             <br><br>
             <!-- This is where users can view our tokenomics on the index page-->
-            <div class="col-lg-12">
-                <h2 class="page-header">Tokenomics</h2>
-                <pre>
+            
+            <div class="md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4><i class="fa fa-fw fa-btc"></i>Tokenomics</h4>
+                    </div>
+                    <div class="panel-body">
+                        <!-- This is for auction information-->
+                        <pre>
 21,000,000 distributed via Proof of Work
 10,500,000 distributed via Auctions
 10,500,000 distributed via Stakings
-                </pre>
+                        </pre>
+                    </div>
+                </div>
             </div>
             <div class="md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-check"></i> Auction</h4>
+                        <h4><i class="fa fa-fw fa-exchange"></i>&nbsp;&nbsp;Auction</h4>
                     </div>
                     <div class="panel-body">
                         <!-- This is for auction information-->
@@ -232,14 +250,14 @@ Each participant will fairly receive their share of claimable Forge at auction e
 At token launch Forge auction will provide 8,192 claimable Forge and will half every 600 auctions (estimated 4-5 years).   
                         </pre>
                         <a href="auction.html" class="btn btn-default">Auction</a>
-                        <a href="howtoauction.html" class="btn btn-default">How to Auction</a>
+                        <a href="howtoauction.html" class="btn btn-default btnsex">How to Auction</a>
                     </div>
                 </div>
             </div>
             <div class="md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-gift"></i> Stake</h4>
+                        <h4><i class="fa fa-fw fa-shield"></i>&nbsp;Stake</h4>
                     </div>
                     <div class="panel-body">
                         
@@ -253,14 +271,14 @@ The contract will distribute 0xBitcoin tokens, Forge, Polygon and possibly two o
 LP stakers also receive 33% of all 0xBitcoin minted by the Auction contract
                         </pre>
                         <a href="staking.html" class="btn btn-default">Stake</a>
-                        <a href="howtostake.html" class="btn btn-default">How to Stake</a>
+                        <a href="howtostake.html" class="btn btn-default btnsex">How to Stake</a>
                     </div>
                 </div>
             </div>
             <div class="md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-compass"></i> Mine</h4>
+                        <h4><i class="fa fa-fw fa-money"></i> Mine</h4>
                     </div>
                     <div class="panel-body">
 
@@ -277,7 +295,7 @@ Miners receive 66% of all 0xBitcoin made by the Auction contract.
                         </pre>
                         <!--Download is located here, already rigged to the button for instant download-->
                         <a href="https://drive.google.com/uc?export=download&id=1pHsZcw050_Z9Yfn5a1wW5MCuSJp5DYRS" class="btn btn-default">Download Here</a>
-                        <a href="howtomine.html" class="btn btn-default">How to Mine</a>
+                        <a href="howtomine.html" class="btn btn-default btnsex">How to Mine</a>
                     </div>
                 </div>
             </div>
@@ -308,6 +326,7 @@ Miners receive 66% of all 0xBitcoin made by the Auction contract.
             </div>
         </footer>
     </div>
+</div>
     <!--bootstrap stuff, dont mess with it-->
     <!-- /.container -->
     <!-- jQuery -->
@@ -321,6 +340,7 @@ Miners receive 66% of all 0xBitcoin made by the Auction contract.
     })
     </script>
 	</div>
+    
 </body>
 
 </html>
