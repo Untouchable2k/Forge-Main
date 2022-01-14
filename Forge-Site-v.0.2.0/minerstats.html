@@ -1,10 +1,4 @@
-<!--This is the index html page or the home page for the website-->
-
-<!--Writer Joseph Bittner/Uncle Dr Joe-->
-<!--Forge project creator Stan/RedManStan-->
-<!--Do not duplicate our information for malicious intent, we will find you-->
-<!--Forge is new and exciting, we are putting a lot of effort into perfecting this project-->
-<!--Created with love, duplicate with love *heartemoji*-->
+<!--oh look, another page you dont need. If you want it tho its here-->
 <!doctype html>
 <html lang="en" class="no-js">
 <head>
@@ -21,9 +15,7 @@
     <link href="css/rounded-icons.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-<!--Information for editor-->
-<!--When updating information/links/pictures, the same information needs updated on each HTML page, not just the index-->
-<!--Comments have been made to assist future developers-->
+
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -35,7 +27,6 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
-                    
                 </button>
                 <a class="navbar-brand" href="index.html" target="_self"><img src="img/forgeprofile circle-02.png" width="70" height="56" class="img-responsive"></a>
             </div>
@@ -43,16 +34,14 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="dapp.html">DAPP - Stake & Auctions</a>
+                        <a href="staking.html">DAPP - Stake, Mine, Auction</a>
                     </li>
                     <li>
-                        <a href="stats.html">Token Stats</a>
-                    </li>                    
-                    <!--an ordered list stan made me remove 3 times-->
-                   <li class="dropdown">
+                        <a href="auction.html">Token Stats</a>
+                    </li>
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Forge Instructions<b class="caret"></b></a>
                         <ul class="dropdown-menu">
-
                             <li>
                                 <a href="whitepaper.html">Whitepaper</a>
                             </li>
@@ -70,174 +59,37 @@
                             </li>
                         </ul>
                     </li>
-                        </ul>
+                        </ul>  
             </div>
-            <!-- class /.navbar-collapse -->
+            <!-- /.navbar-collapse -->
         </div>
-        <!-- class /.container -->
+        <!-- /.container -->
     </nav>
-    
-    <!--The Headers Carousel -->
-    <header id="myCarousel" class="carousel slide">
-        <!-- Indicators for switching slides -->
-        <!-- <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>     
-        </ol> -->
-
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner">
-            <div class="item active">
-                <div class="fill" style="background-image:url('img/forge_orange.png'); background-size: contain; padding: 5%;"></div>
-                <div class="carousel-caption">
-                </div>
-            </div>
-            <div class="item next">
-                <div class="fill" style="background-image:url('img/forge_black.png'); background-size: contain; padding: 5%;"></div>
-                <div class="carousel-caption">
-                </div>
-            </div>
-            <div class="item next">
-              <div class="fill" style="background-image:url('img/forge_white.png'); background-size: contain; padding: 5%;"></div>
-              <div class="carousel-caption">
-              </div>
-          </div>
-            <!--Class is editable in modern-business.css-->
-            </div>
+    <div>
+        <object data=http://forgetoken.org:81/ size="50%" width="100%" height="1000px"> <embed src=http://97.91.157.100:4200/ width="contain" height="contain"> </embed> Error: Sorry man, something happened. </object>
         </div>
-        <!-- Controls for carousel, can be edited in modern-business.css-->
-        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-            <span class="icon-prev"></span>
-        </a>
-        <a class="right carousel-control" href="#myCarousel" data-slide="next">
-            <span class="icon-next"></span>
-        </a>
-    </header>
-    <div class="img-block">
-    <div class="x bounce">
-        <img class="y"  src="img/120x120 forge.png" alt="FORGE" />
-      </div>
-      <div class="el-wrap x bounce">
-        <div class="el y bounce"></div>
-      </div>
-      
-    
-    <!-- Page Content -->
-    <div class="container" style="padding-top: 0%;margin-top: 0%;">
-        <!-- Marketing Icons Section -->
-            <div class="col-lg-12">
-               <!-- Commented out for now <h1 class="page-header">
-                    Auction, Stake, Mine
-                </h1> -->
-            </div>
-            
-            <!-- This is where users can view our tokenomics on the index page-->
-            
-            <div class="md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-btc"></i>Tokenomics</h4>
-                    </div>
-                    <div class="panel-body">
-                        <!-- This is for auction information-->
-                        <pre>
-21,000,000 distributed via Proof of Work
-10,500,000 distributed via Auctions
-10,500,000 distributed via Stakings
-                        </pre>
-                    </div>
-                </div>
-            </div>
-            <div class="md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-exchange"></i>&nbsp;&nbsp;Auction</h4>
-                    </div>
-                    <div class="panel-body">
-                        <!-- This is for auction information-->
-                        <p>Auction your tokens for FORGE here</p>
-                        <pre>
-A way to securely auction Forge. Auctions end every three days.
-Our contract only accepts 0xBitcoin Tokens to bid during Auction of Forge Tokens.
-After auction ends the reward divides by how much 0xBitcoin user sent. 
-Each participant will fairly receive their share of claimable Forge at auction end.
-At token launch Forge auction will provide 8,192 claimable Forge and will half every 600 auctions (estimated 4-5 years).   
-                        </pre>
-                        <a href="staking.html" class="btn btn-default">Auction</a>
-                        <a href="howtoauction.html" class="btn btn-default btnsex">How to Auction</a>
-                    </div>
-                </div>
-            </div>
-            <div class="md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-shield"></i>&nbsp;Stake</h4>
-                    </div>
-                    <div class="panel-body">
-                        
-                        <!--This is for staking information-->
-                        <p>Stake Here</p>
-                        <pre>
-Holders of 0xBitcoin/Forge liquidity token will be rewarded in shiny tokens.
-By staking liquidity tokens users allow the contract to grow and get larger as time goes on.
-At token launch rewards are ~3,000 tokens a day. Split among all depositors in the staking contract.
-The contract will distribute 0xBitcoin tokens, Forge, Polygon and possibly two other coins!
-LP stakers also receive 33% of all 0xBitcoin minted by the Auction contract
-                        </pre>
-                        <a href="staking.html" class="btn btn-default">Stake</a>
-                        <a href="howtostake.html" class="btn btn-default btnsex">How to Stake</a>
-                    </div>
-                </div>
-            </div>
-            <div class="md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-money"></i> Mine</h4>
-                    </div>
-                    <div class="panel-body">
+         <!-- Footer -->
 
-                        <!-- This is where users can download our miner or view the stats page -->
-                        <p>Download Our Miner and Get Started</p>
-                        <pre>
-A way to securely mint Forge tokens using our safe POW system and contracts.
-Machines connected to the contract solve complicated hashes with an answer unique to their ethereum address for the reward
-Each successful solve takes around 30 minutes, each solve rewards 150 Forge tokens. This reward will half every every ~4 years.
-Receive a mining reward of up to 50+ different cryptocurrencies and Forge in our mining lottery!
-Mining rate controls auction rate, and stake rate, the more tokens mined the more tokens for sale/rewarded.
-Miners could also be rewarded with wrapped NFTs or other valuable items that earn rewards in 12 hour intervals.
-Miners receive 66% of all 0xBitcoin made by the Auction contract.
-                        </pre>
-                        <!--Download is located here, already rigged to the button for instant download-->
-                        <a href="https://drive.google.com/uc?export=download&id=1pHsZcw050_Z9Yfn5a1wW5MCuSJp5DYRS" class="btn btn-default">Download Here</a>
-                        <a href="howtomine.html" class="btn btn-default btnsex">How to Mine</a>
-                        <a href="minerstats.html" class="btn btn-default">Check the pool</a>
-                    </div>
-                </div>
-            </div>
+    </div>
 
-            <div class="md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4><i class="fa fa-fw fa-warning"></i> DISCLAIMER</h4>
-                    </div>
-                    <div class="panel-body">
-                        <!-- This is where users can download our miner or view the stats page -->
-                        <pre>
-Only send 0xBitcoin from a Wallet you have the private key of like Metamask. Do not send 0xBitcoin directly from Coinbase/Kraken/Gemini or the 0xBitcoin purchase will not be credited correctly.
-Must be on the Polygon/Matic Blockchain or your purchase will not be credited.
-                        </pre>
-                        <!--Download is located here, already rigged to the button for instant download-->
-                        <a href="0xbtcpolyscan.html" class="btn btn-default btnsex">0xBitcoin Contract</a>
-                    </div>
-                </div>
-            </div></div>
-        
-            <div class="footer-dark">
-                <footer>
-                    <div class="container">
-                        <div class="row" >
-                            <div class="col-sm-6 col-md-3 item">
-                                <h3>Add the coins to your wallet here.</h3>
-                                <ul>
+    <!-- /.container -->
+    <script src="js/jquery.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Script to Activate the Carousel -->
+    <script>
+    $('.carousel').carousel({
+        interval: 5000 //changes the speed
+    })
+    </script>
+	</div>
+    <div class="footer-dark">
+        <footer>
+            <div class="container">
+                <div class="row" >
+                    <div class="col-sm-6 col-md-3 item">
+                        <h3>Add the coins to your wallet here.</h3>
+                        <ul>
                                     <li>
                                         <button class="enableEthereumButton22 btn btn-hover color-1 glowing ">Add Forge to Metamask</button>
                                                 
@@ -501,60 +353,41 @@ Must be on the Polygon/Matic Blockchain or your purchase will not be credited.
                                                 }
                                             </script>
                                     </li>
-                                </ul>
-                            
-                            <div class="col-sm-6 col-md-3 item">
-                                <h3>About</h3>
-                                <ul>
-                                    <li><a href="howtoauction.html">How to Auction</a></li>
-                                    <li><a href="howtomine.html">How to Mine</a></li>
-                                    <li><a href="howtostake.html">How to Stake</a></li>
-                                    <li><a href="whitepaper.html">Whitepaper</a></li>
-                                    <li><a href="contactus.html">Contact Us</a></li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6 item text">
-                                <h3>Forge</h3>
-                                <p>A new way to DEFI. Auction your 0xBTC to collect your share of the Forge bounty; or just mine it yourself with our dedicated miner!
-                                  Stake your tokens to receive even more shiny Forge bounty.
-                                </p>
-                            </div>
-                            <div class="col item">
-                                <a href="https://t.me/Forge_Tokens">
-                              <i class="fa fa-telegram"style="padding:0px"></i></a>
-                                <a href="https://www.facebook.com/groups/199083588857137">
-                              <i class="fa fa-facebook"style="padding:0px"></i></a>
-                                <a href="https://twitter.com/ForgeToken">
-                              <i class="fa fa-twitter"style="padding:0px"></i></a>
-                                <a href="http://forgetoken.medium.com/">  
-                              <i class="fa fa-medium" style="padding:0px"></i></a>
-                                <a href="https://github.com/CrazyCaptian/0xMegaMine/tree/main/code">  
-                              <i class="fa fa-github"style="padding:0px"></i></a>
-                                <a href="https://discord.gg/tjQ6btKKJt">  
-                              <i class="">Join Our Discord</i></a></div>
-                        </div>
+                        </ul>
+                    
+                    <div class="col-sm-6 col-md-3 item">
+                        <h3>About</h3>
+                        <ul>
+                            <li><a href="howtoauction.html">How to Auction</a></li>
+                            <li><a href="howtomine.html">How to Mine</a></li>
+                            <li><a href="howtostake.html">How to Stake</a></li>
+                            <li><a href="whitepaper.html">Whitepaper</a></li>
+                            <li><a href="contactus.html">Contact Us</a></li>
+                        </ul>
                     </div>
-                </footer>
+                    <div class="col-md-6 item text">
+                        <h3>Forge</h3>
+                        <p>A new way to DEFI. Auction your 0xBTC to collect your share of the Forge bounty; or just mine it yourself with our dedicated miner!
+                          Stake your tokens to receive even more shiny Forge bounty.
+                        </p>
+                    </div>
+                    <div class="col item">
+                        <a href="https://t.me/Forge_Tokens">
+                      <i class="fa fa-telegram"style="padding:0px"></i></a>
+                        <a href="https://www.facebook.com/groups/199083588857137">
+                      <i class="fa fa-facebook"style="padding:0px"></i></a>
+                        <a href="https://twitter.com/ForgeToken">
+                      <i class="fa fa-twitter"style="padding:0px"></i></a>
+                        <a href="http://forgetoken.medium.com/">  
+                      <i class="fa fa-medium" style="padding:0px"></i></a>
+                        <a href="https://github.com/CrazyCaptian/0xMegaMine/tree/main/code">  
+                      <i class="fa fa-github"style="padding:0px"></i></a>
+                        <a href="https://discord.gg/tjQ6btKKJt">  
+                      <i class="">Join Our Discord</i></a></div>
+                </div>
             </div>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
-                 <!-- Footer -->
-    <!--bootstrap stuff, dont mess with it-->
-    <!-- /.container -->
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-    <!-- Script to Activate the Carousel -->
-    <script>
-    $('.carousel').carousel({
-        interval: 5000 //changes the speed
-    })
-    </script>
-	</div>
-    
+        </footer>
+    </div>
 </body>
 
 </html>
-
-<!--Bootstrap was used for this project because of the access to key website dev features, and also to make scalability between devices smooth.-->
