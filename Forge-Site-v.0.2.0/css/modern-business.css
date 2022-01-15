@@ -192,10 +192,10 @@ footer.dogshit{
   }
   @-webkit-keyframes glowing {
     from {
-      box-shadow: 5 5 5px #fff, 0 0 10px #fff, 0 0 10px grey, 0 0 20px black, 0 0 20px grey, 0 0 30px grey, 0 0 30px black;
+      box-shadow: 5 5 5px #fff, 0 0 5px #fff, 0 0 5px grey, 0 0 5px #F1592A, 0 0 5px grey, 0 0 5px grey, 0 0 5px #F1592A;
     }
     to {
-      box-shadow: 0 0 5px #fff, 0 0 5px #F1592A, 0 0 5px #F1592A, 0 0 5px #F1592A, 0 0 10px #F1592A, 0 0 10px #F1592A, 0 0 10px #F1592A;
+      box-shadow: 0 0 5px #fff, 0 0 5px #F1592A, 0 0 5px #F1592A, 0 0 5px #F1592A, 0 0 5px #F1592A, 0 0 5px #F1592A, 0 0 5px #F1592A;
     }
   }
 

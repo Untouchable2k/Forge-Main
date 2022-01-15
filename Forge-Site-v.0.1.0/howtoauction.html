@@ -98,6 +98,7 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
         
     </div></div>
     <div class="footer-dark" style="margin-top: 300px;">
+      <div class="footer-dark">
         <footer>
             <div class="container">
                 <div class="row" >
@@ -105,7 +106,7 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
                         <h3>Add the coins to your wallet here.</h3>
                         <ul>
                             <li>
-                                <button class="enableEthereumButton22 btn btn-hover color-1 glowing ">Add PMBTC to Metamask</button>
+                                <button class="enableEthereumButton22 btn btn-hover color-1 glowing"  style="font-weight: 750;">Add Forge to Metamask</button>
                                         
                             
                             <script>
@@ -119,9 +120,6 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
                               getAccount22();
                             });
                             
-                            ethereumButton.addEventListener('click', () => {
-                              getAccount();
-                            });
                             
                             async function getAccount() {
                               accounts = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -162,13 +160,12 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
                             }		
                                     
                                     await new Promise(r => setTimeout(r, 20));
-                            
+                                   accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                                      const tokenAddress = '0x71b821aa52a49f32eed535fca6eb5aa130085978';
+                                    const tokenSymbol = 'Forge';
+                                    const tokenDecimals = 8;
+                                    const tokenImage = 'https://polygonscan.com/token/images/0xbitcoin_32.png';
                                     
-                              accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                              const tokenAddress = '0x91DB156E6365de9bA8070d733F3163a48E6e3FC9';
-                            const tokenSymbol = 'PMBTC';
-                            const tokenDecimals = 9;
-                            const tokenImage = 'https://raw.githubusercontent.com/CrazyCaptian/PMBTC_Extra/main/32x32pmbtc.png';
                             
                             try {
                               // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -197,23 +194,19 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
                             </script>
                             </li>
                             <li>
-                                <button class="enableEthereumButton22 btn btn-hover color-1 glowing">Add 0xBTC to Metamask</button>
+                                <button class="enableEthereumButton221 btn btn-hover color-1 glowing" style="font-weight: 750;">Add 0xBTC to Metamask</button>
                                         
                             
                             <script>
                                 
-                            let accounts = [];
                             //Sending Ethereum to an address
                             //
-                            const ethereumButton22 = document.querySelector('.enableEthereumButton22');
+                            const ethereumButton221 = document.querySelector('.enableEthereumButton221');
                             
-                            ethereumButton22.addEventListener('click', () => {
-                              getAccount22();
+                            ethereumButton221.addEventListener('click', () => {
+                              getAccount223();
                             });
                             
-                            ethereumButton.addEventListener('click', () => {
-                              getAccount();
-                            });
                             
                             async function getAccount() {
                               accounts = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -222,7 +215,7 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
                             }
                                 
                             
-                            async function getAccount22() {
+                            async function getAccount223() {
                                     
                                     
                             try {
@@ -257,7 +250,7 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
                             
                                     
                               accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                              const tokenAddress = '0x71b821aa52a49f32eed535fca6eb5aa130085978';
+                              const tokenAddress = '0xB6eD7644C69416d67B522e20bC294A9a9B405B31';
                             const tokenSymbol = '0xBTC';
                             const tokenDecimals = 8;
                             const tokenImage = 'https://polygonscan.com/token/images/0xbitcoin_32.png';
@@ -289,22 +282,17 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
                             </script>
                             </li>
                             <li>
-                                <button class="enableEthereumButton22 btn btn-hover color-1 glowing ">Add Forge to Metamask</button>
+                                <button class="enableEthereumButton222 btn btn-hover color-1 glowing" style="font-weight: 750;">Add Fge/0xBTC LP Tokens to Metamask</button>
                                         
                                     </div>
                                     <script>
                                         
-                                    let accounts = [];
                                     //Sending Ethereum to an address
                                     //
-                                    const ethereumButton22 = document.querySelector('.enableEthereumButton22');
+                                    const ethereumButton222 = document.querySelector('.enableEthereumButton222');
                                     
-                                    ethereumButton22.addEventListener('click', () => {
+                                    ethereumButton222.addEventListener('click', () => {
                                       getAccount22();
-                                    });
-                                    
-                                    ethereumButton.addEventListener('click', () => {
-                                      getAccount();
                                     });
                                     
                                     async function getAccount() {
@@ -350,7 +338,7 @@ Bid 0xBitcoin For the Auction button will have an approve and a submit two trans
                                             
                                       accounts = await ethereum.request({ method: 'eth_requestAccounts' });
                                       const tokenAddress = '0x71b821aa52a49f32eed535fca6eb5aa130085978';
-                                    const tokenSymbol = 'Forge';
+                                    const tokenSymbol = "FGE LP";
                                     const tokenDecimals = 8;
                                     const tokenImage = 'https://polygonscan.com/token/images/0xbitcoin_32.png';
                                     
