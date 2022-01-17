@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="css/rounded-icons.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-
+    <link href="css/particle.scss" rel="stylesheet" type="text/scss">
     <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-217288124-1">
 </script>
@@ -36,6 +36,7 @@
 <!--When updating information/links/pictures, the same information needs updated on each HTML page, not just the index-->
 <!--Comments have been made to assist future developers-->
 <body>
+  
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -87,7 +88,14 @@
         </div>
         <!-- class /.container -->
     </nav>
-    
+    <div class="page-bg"></div>
+
+<div class="animation-wrapper">
+  <div class="particle particle-1"></div>
+  <div class="particle particle-2"></div>
+  <div class="particle particle-3"></div>
+  <div class="particle particle-4"></div>
+</div>
     <!--The Headers Carousel -->
     <header id="myCarousel" class="carousel slide">
         <!-- Indicators for switching slides -->
@@ -123,17 +131,11 @@
             <span class="icon-next"></span>
         </a>
     </header>
-    <div class="img-block">
-    <div class="x bounce">
-        <img class="y"  src="img/120x120 forge.png" alt="FORGE" />
-      </div>
-      <div class="el-wrap x bounce">
-        <div class="el y bounce"></div>
-      </div>
+   
       
     
     <!-- Page Content -->
-    <div class="container" style="padding-top: 0%;margin-top: 0%;">
+    <div class="container" style="padding-top: 0%;margin-top: 5%;">
         <!-- Marketing Icons Section -->
             <div class="col-lg-12">
                <!-- Commented out for now <h1 class="page-header">
@@ -242,7 +244,7 @@ Must be on the Polygon/Matic Blockchain or your purchase will not be credited.
                 </div>
             </div></div>
         
-            <div class="footer-dark">
+            <div class="footer-dark" style="margin-top: 5%;">
                 <footer>
                     <div class="container">
                         <div class="row" >
