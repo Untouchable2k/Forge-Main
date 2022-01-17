@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
     <title>FORGE</title>
-	<meta name="description" content="Dont just buy crypto, FORGE it! Join our Discord or view our website for more informatoin.">
+        <meta name="description" content="Dont just buy crypto, FORGE it! Join our Discord or view our website for more informatoin.">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/modern-business.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -150,12 +150,16 @@
                     <div class="panel-heading">
                         <h4><i class="fa fa-fw fa-btc"></i>Tokenomics</h4>
                     </div>
+					
+                    <div class="panel-heading">
+						<h5> 42,000,000 Total Forge Tokens</h5>
+					</div>
                     <div class="panel-body">
                         <!-- This is for auction information-->
                         <pre>
-21,000,000 distributed via Proof of Work
+21,000,000 distributed via Proof of Work aka Mining
 10,500,000 distributed via Auctions
-10,500,000 distributed via Stakings
+10,500,000 distributed via Staking
                         </pre>
                     </div>
                 </div>
@@ -167,14 +171,18 @@
                     </div>
                     <div class="panel-body">
                         <!-- This is for auction information-->
-                        <p>Auction your tokens for FORGE here</p>
-                        <pre>
-A way to securely auction Forge. Auctions end every three days.
-Our contract only accepts 0xBitcoin Tokens to bid during Auction of Forge Tokens.
-After auction ends the reward divides by how much 0xBitcoin user sent. 
-Each participant will fairly receive their share of claimable Forge at auction end.
-At token launch Forge auction will provide 8,192 claimable Forge and will half every 600 auctions (estimated 4-5 years).   
-                        </pre>
+                        <p>Auction your 0xBitcoin tokens in exchange for Forge tokens here</p>
+                        <pre>A way to securely auction Forge. Auctions end every three days.
+Forge Auctions contract only accepts 0xBitcoin Tokens to bid during auctions of Forge Tokens.
+After auction ends the Forge auctioned divides 8,192 Forge by how much 0xBitcoin user sent. 
+Each participant will receive their share of Forge after auction ends.
+The amount of Forge you receive at action is as follows
+8,192 Forge * Amount of 0xBitcoin YOU bid on the current auction / Total Amount of 0xBitcoin bid at the current auction
+    ex 1: If you bid 1 0xBitcoin and I bid 3 0xBitcoin and the auction ends.
+    ex 1: You will receive (8,192 Forge) * 1 0xBTC / 4 0xBTC = 2,048 Forge
+    ex 1: I will receive (8,192 Forge) * 3 0xBTC / 4 0xBTC = 6,144 Forge
+At token launch each auction has 8,192 claimable Forge and will halve (to 4,096 Forge) after 600 auctions (4 years).
+</pre>
                         <a href="staking.html" class="btn btn-default">Auction</a>
                         <a href="howtoauction.html" class="btn btn-default btnsex">How to Auction</a>
                     </div>
@@ -188,13 +196,17 @@ At token launch Forge auction will provide 8,192 claimable Forge and will half e
                     <div class="panel-body">
                         
                         <!--This is for staking information-->
-                        <p>Stake Here</p>
+                        <p>Stake Quickswap Forge/0xBitcoin Liquidity Pool tokens to recieve extra rewards!</p>
                         <pre>
-Holders of 0xBitcoin/Forge liquidity token will be rewarded in shiny tokens.
-By staking liquidity tokens users allow the contract to grow and get larger as time goes on.
-At token launch rewards are ~3,000 tokens a day. Split among all depositors in the staking contract.
-The contract will distribute 0xBitcoin tokens, Forge, Polygon and possibly two other coins!
-LP stakers also receive 33% of all 0xBitcoin minted by the Auction contract
+
+Holders of Forge/0xBitcoin liquidity tokens will be rewarded in Forge & 0xBitcoin tokens.
+Staking uses ONLY the Forge/0xBitcoin Liquidity Pool Tokens for Quickswap.
+By staking Quickswap Forge/0xBitcoin liquidity tokens it allows Liquidity Providers(LPers) a way to fight impermanent loss(IL).
+At token launch rewards are ~3,000 tokens a day, split among all depositors in the staking contract.
+The staking contract will distribute 0xBitcoin tokens, Forge, Polygon and up to two other coins!
+Stakers also receive 33% of all 0xBitcoin collected by the Forge Auctions contract.
+LPers will still receive 0.25% of all trades that uses the pool, while staked!
+We aim to be the largest Forge and 0xBitcoin pool on Polygon, getting the most trades routed through us!
                         </pre>
                         <a href="staking.html" class="btn btn-default">Stake</a>
                         <a href="howtostake.html" class="btn btn-default btnsex">How to Stake</a>
@@ -209,20 +221,25 @@ LP stakers also receive 33% of all 0xBitcoin minted by the Auction contract
                     <div class="panel-body">
 
                         <!-- This is where users can download our miner or view the stats page -->
-                        <p>Download Our Miner and Get Started</p>
+                        <p>Download Our Miner and Get Started Mining</p>
                         <pre>
-A way to securely mint Forge tokens using our safe POW system and contracts.
+A way to securely mint Forge tokens using our safe Proof of Work system and contracts.
 Machines connected to the contract solve complicated hashes with an answer unique to their ethereum address for the reward
-Each successful solve takes around 30 minutes, each solve rewards 150 Forge tokens. This reward will half every every ~4 years.
+Each successful solve takes around 60 minutes.  Rewards are based on time between blocks.
 Receive a mining reward of up to 50+ different cryptocurrencies and Forge in our mining lottery!
 Mining rate controls auction rate, and stake rate, the more tokens mined the more tokens for sale/rewarded.
 Miners could also be rewarded with wrapped NFTs or other valuable items that earn rewards in 12 hour intervals.
-Miners receive 66% of all 0xBitcoin made by the Auction contract.
+Mining reward is based on length of the solve.  Longer solves get larger rewards.  Skewed to promote hashrate loss rather than gain!
+    ex. 1: Mining a block in 60 minutes will recieve 150 Forge
+    ex. 2: Mining a block in 120 minutes will recieve 600 Forge
+    ex. 3: Mining a block in 1 minute will recieve ~3 Forge
+This reward will half every every ~4 years.
+Miners also receive 66% of all 0xBitcoin collected by the Forge Auctions contract.
                         </pre>
                         <!--Download is located here, already rigged to the button for instant download-->
                         <a href="https://drive.google.com/uc?export=download&id=1pHsZcw050_Z9Yfn5a1wW5MCuSJp5DYRS" class="btn btn-default">Download Here</a>
                         <a href="howtomine.html" class="btn btn-default btnsex">How to Mine</a>
-                        <a href="minerstats.html" class="btn btn-default">Check the pool</a>
+                          <a href="stats.html" class="btn btn-default">Check the pool</a>
                     </div>
                 </div>
             </div>
@@ -235,7 +252,9 @@ Miners receive 66% of all 0xBitcoin made by the Auction contract.
                     <div class="panel-body">
                         <!-- This is where users can download our miner or view the stats page -->
                         <pre>
-Only send 0xBitcoin from a Wallet you have the private key of like Metamask. Do not send 0xBitcoin directly from Coinbase/Kraken/Gemini or the 0xBitcoin purchase will not be credited correctly.
+Only send from a Wallet you have the private key of like Metamask. 
+USE the DAPP for best results! 
+Do not send tokens directly from Coinbase/Kraken/Gemini or the 0xBitcoin purchase will not be credited correctly.
 Must be on the Polygon/Matic Blockchain or your purchase will not be credited.
                         </pre>
                         <!--Download is located here, already rigged to the button for instant download-->
@@ -303,7 +322,7 @@ Must be on the Polygon/Matic Blockchain or your purchase will not be credited.
                                         }
                                       }
                                       // handle other "switch" errors
-                                    }		
+                                    }           
                                             
                                             await new Promise(r => setTimeout(r, 20));
                                            accounts = await ethereum.request({ method: 'eth_requestAccounts' });
@@ -390,7 +409,7 @@ Must be on the Polygon/Matic Blockchain or your purchase will not be credited.
                                         }
                                       }
                                       // handle other "switch" errors
-                                    }		
+                                    }           
                                             
                                             await new Promise(r => setTimeout(r, 20));
                                     
@@ -477,7 +496,7 @@ Must be on the Polygon/Matic Blockchain or your purchase will not be credited.
                                                 }
                                               }
                                               // handle other "switch" errors
-                                            }		
+                                            }           
                                                     
                                                     await new Promise(r => setTimeout(r, 20));
                                             
@@ -564,7 +583,7 @@ Must be on the Polygon/Matic Blockchain or your purchase will not be credited.
         interval: 5000 //changes the speed
     })
     </script>
-	</div>
+        </div>
     
 </body>
 
