@@ -56,7 +56,7 @@ body {
 /* Home Page Carousel */
 
 header.carousel {
-    height: fit-content;
+    height: fit;
 }
 
 header.carousel .item,
@@ -125,10 +125,10 @@ footer {
 
 pre {
     overflow-x: auto;
-    white-space: pre-wrap;
     white-space: -moz-pre-wrap;
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
+    white-space: pre-wrap;
     word-break: keep-all;
  }
 
@@ -153,12 +153,12 @@ pre {
     margin: 1% 0%;
     padding: 1% 5%;
     height: fill;
-    width: fill;
+    width: fit;
     text-align:center;
     border: none;
     background-size: 300% 100%;
     border-radius: 100px;
-    moz-transition: all .4s ease-in-out;
+    -moz-transition: all .4s ease-in-out;
     -o-transition: all .4s ease-in-out;
     -webkit-transition: all .4s ease-in-out;
     transition: all .4s ease-in-out;
@@ -166,7 +166,7 @@ pre {
 
 .btn-hover:hover {
     background-position: 100% 0;
-    moz-transition: all .4s ease-in-out;
+    -moz-transition: all .4s ease-in-out;
     -o-transition: all .4s ease-in-out;
     -webkit-transition: all .4s ease-in-out;
     transition: all .4s ease-in-out;
@@ -190,7 +190,7 @@ footer.dogshit{
     -moz-animation: glowing 1s ease-in-out infinite alternate;
     animation: glowing 1s ease-in-out infinite alternate;
   }
-  @-webkit-keyframes glowing {
+  @keyframes glowing {
     from {
       box-shadow: 5 5 5px #fff, 0 0 5px #fff, 0 0 5px grey, 0 0 5px #F1592A, 0 0 5px grey, 0 0 5px grey, 0 0 5px #F1592A;
     }
