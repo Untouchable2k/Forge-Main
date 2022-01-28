@@ -363,3 +363,24 @@ footer.dogshit{
     margin-bottom:0;
   }
   
+  div .addedclass1 {
+    background-image:url('../img/forge_orange.png'); background-size: contain; padding: 5%;
+  }
+  div .addedclass2 {
+    background-image:url('../img/forge_black.png'); background-size: contain; padding: 5%;
+  }
+  div .addedclass3 {
+    background-image:url('../img/forge_orange.png'); background-size: contain; padding: 5%;
+  }
+  .addedstylefooter{
+    margin-top: 5%;
+  }
+  .addedstylebutton{
+    font-weight: 750;
+  }
+  .zeropadding{
+    padding:0px
+  }
+  .addedstylediv{
+    padding-top: 0%;margin-top: 5%;
+  }
