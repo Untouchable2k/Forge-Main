@@ -134,266 +134,267 @@ Then approve the Deposit Transaction in Metamask.
                       <h3>Add the coins to your wallet here.</h3>
                       <ul>
                           <li>
-                              <button type="button" class="enableEthereumButton22 btn btn-hover color-1 glowing addedstylebutton">Add Forge to Metamask</button>
-                                      
-                          
-                          <script>
-                              
-                          let accounts = [];
-                          //Sending Ethereum to an address
-                          //
-                          const ethereumButton22 = document.querySelector('.enableEthereumButton22');
-                          
-                          ethereumButton22.addEventListener('click', () => {
-                            getAccount22();
-                          });
-                          
-                          
-                          async function getAccount() {
-                            accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                            showAccount.innerHTML = accounts;
-                           console.log(accounts);
-                          }
-                              
-                          
-                          async function getAccount22() {
-                                  
-                                  
-                          try {
-                            await ethereum.request({
-                              method: 'wallet_switchEthereumChain',
-                              params: [{ chainId: '0x89' }],
-                            });
-                          } catch (switchError) {
-                            // This error code indicates that the chain has not been added to MetaMask.
-                            if (switchError.code === 4902) {
-                              try {
-                                await ethereum.request({
-                                  method: 'wallet_addEthereumChain',
-                                  params: [{ chainId: '0x89', 
-                                  chainName: 'Polygon Mainnet',
-                                  nativeCurrency: {
-                                      name: 'MATIC',
-                                      symbol: 'MATIC', // 2-6 characters long
-                                      decimals: 18
-                                  },
-                                  blockExplorerUrls: ['https://polygonscan.com/'],
-                                  rpcUrls: ['https://polygon-rpc.com/'] }],
-                                });
-                              } catch (addError) {
-                                // handle "add" error
-                              }
-                            }
-                            // handle other "switch" errors
-                          }		
-                                  
-                                  await new Promise(r => setTimeout(r, 20));
-                                 accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                                    const tokenAddress = '0xdb922ef5384a968b6cfc0ad3d737c3b4bc838ae0';
-                                  const tokenSymbol = 'Forge';
-                                  const tokenDecimals = 8;
-                                  const tokenImage = 'https://polygonscan.com/token/images/0xbitcoin_32.png';
-                                  
-                          
-                          try {
-                            // wasAdded is a boolean. Like any RPC method, an error may be thrown.
-                            const wasAdded = await ethereum.request({
-                              method: 'wallet_watchAsset',
-                              params: {
-                                type: 'ERC20', // Initially only supports ERC20, but eventually more!
-                                options: {
-                                  address: tokenAddress, // The address that the token is at.
-                                  symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-                                  decimals: tokenDecimals, // The number of decimals in the token
-                                  image: tokenImage, // A string url of the token logo
-                                },
-                              },
-                            });
-                          
-                            if (wasAdded) {
-                              console.log('Thanks for your interest!');
-                            } else {
-                              console.log('Your loss!');
-                            }
-                          } catch (error) {
-                            console.log(error);
-                          }
-                              }
-                          </script>
-                          </li>
-                          <li>
-                              <button type="button" class="enableEthereumButton221 btn btn-hover color-1 glowing addedstylebutton">Add 0xBTC to Metamask</button>
-                                      
-                          
-                          <script>
-                              
-                          //Sending Ethereum to an address
-                          //
-                          const ethereumButton221 = document.querySelector('.enableEthereumButton221');
-                          
-                          ethereumButton221.addEventListener('click', () => {
-                            getAccount223();
-                          });
-                          
-                          
-                          async function getAccount() {
-                            accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                            showAccount.innerHTML = accounts;
-                           console.log(accounts);
-                          }
-                              
-                          
-                          async function getAccount223() {
-                                  
-                                  
-                          try {
-                            await ethereum.request({
-                              method: 'wallet_switchEthereumChain',
-                              params: [{ chainId: '0x89' }],
-                            });
-                          } catch (switchError) {
-                            // This error code indicates that the chain has not been added to MetaMask.
-                            if (switchError.code === 4902) {
-                              try {
-                                await ethereum.request({
-                                  method: 'wallet_addEthereumChain',
-                                  params: [{ chainId: '0x89', 
-                                  chainName: 'Polygon Mainnet',
-                                  nativeCurrency: {
-                                      name: 'MATIC',
-                                      symbol: 'MATIC', // 2-6 characters long
-                                      decimals: 18
-                                  },
-                                  blockExplorerUrls: ['https://polygonscan.com/'],
-                                  rpcUrls: ['https://polygon-rpc.com/'] }],
-                                });
-                              } catch (addError) {
-                                // handle "add" error
-                              }
-                            }
-                            // handle other "switch" errors
-                          }		
-                                  
-                                  await new Promise(r => setTimeout(r, 20));
-                          
-                                  
-                            accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                            const tokenAddress = '0xB6eD7644C69416d67B522e20bC294A9a9B405B31';
-                          const tokenSymbol = '0xBTC';
-                          const tokenDecimals = 8;
-                          const tokenImage = 'https://polygonscan.com/token/images/0xbitcoin_32.png';
-                          
-                          try {
-                            // wasAdded is a boolean. Like any RPC method, an error may be thrown.
-                            const wasAdded = await ethereum.request({
-                              method: 'wallet_watchAsset',
-                              params: {
-                                type: 'ERC20', // Initially only supports ERC20, but eventually more!
-                                options: {
-                                  address: tokenAddress, // The address that the token is at.
-                                  symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-                                  decimals: tokenDecimals, // The number of decimals in the token
-                                  image: tokenImage, // A string url of the token logo
-                                },
-                              },
-                            });
-                          
-                            if (wasAdded) {
-                              console.log('Thanks for your interest!');
-                            } else {
-                              console.log('Your loss!');
-                            }
-                          } catch (error) {
-                            console.log(error);
-                          }
-                              }
-                          </script>
-                          </li>
-                          <li>
-                              <button type="button" class="enableEthereumButton222 btn btn-hover color-1 glowing addedstylebutton">Add Fge/0xBTC LP Tokens to Metamask</button>                                      
-                                  </div>
-                                  <script>
-                                      
-                                  //Sending Ethereum to an address
-                                  //
-                                  const ethereumButton222 = document.querySelector('.enableEthereumButton222');
-                                  
-                                  ethereumButton222.addEventListener('click', () => {
-                                    getAccount22();
-                                  });
-                                  
-                                  async function getAccount() {
-                                    accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                                    showAccount.innerHTML = accounts;
-                                   console.log(accounts);
-                                  }
-                                      
-                                  
-                                  async function getAccount22() {
-                                          
-                                          
-                                  try {
-                                    await ethereum.request({
-                                      method: 'wallet_switchEthereumChain',
-                                      params: [{ chainId: '0x89' }],
+                              <button type="button" class="zenableEthereumButton22 btn btn-hover color-1 glowing addedstylebutton">Add Forge to Metamask</button>
+                                                
+                                    
+                                    <script>
+                                        
+                                    let accounts = [];
+                                    //Sending Ethereum to an address
+                                    //
+                                    const ethereumButton22ff = document.querySelector('.zenableEthereumButton22');
+                                    
+                                    ethereumButton22ff.addEventListener('click', () => {
+                                      getAccount22ff();
                                     });
-                                  } catch (switchError) {
-                                    // This error code indicates that the chain has not been added to MetaMask.
-                                    if (switchError.code === 4902) {
-                                      try {
-                                        await ethereum.request({
-                                          method: 'wallet_addEthereumChain',
-                                          params: [{ chainId: '0x89', 
-                                          chainName: 'Polygon Mainnet',
-                                          nativeCurrency: {
-                                              name: 'MATIC',
-                                              symbol: 'MATIC', // 2-6 characters long
-                                              decimals: 18
+                                    
+                                    
+                                    async function getAccount() {
+                                      accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                                      showAccount.innerHTML = accounts;
+                                     console.log(accounts);
+                                    }
+                                        
+                                    
+                                    async function getAccount22ff() {
+                                            
+                                            
+                                    try {
+                                      await ethereum.request({
+                                        method: 'wallet_switchEthereumChain',
+                                        params: [{ chainId: '0x89' }],
+                                      });
+                                    } catch (switchError) {
+                                      // This error code indicates that the chain has not been added to MetaMask.
+                                      if (switchError.code === 4902) {
+                                        try {
+                                          await ethereum.request({
+                                            method: 'wallet_addEthereumChain',
+                                            params: [{ chainId: '0x89', 
+                                            chainName: 'Polygon Mainnet',
+                                            nativeCurrency: {
+                                                name: 'MATIC',
+                                                symbol: 'MATIC', // 2-6 characters long
+                                                decimals: 18
+                                            },
+                                            blockExplorerUrls: ['https://polygonscan.com/'],
+                                            rpcUrls: ['https://polygon-rpc.com/'] }],
+                                          });
+                                        } catch (addError) {
+                                          // handle "add" error
+                                        }
+                                      }
+                                      // handle other "switch" errors
+                                    }		
+                                            
+                                            await new Promise(r => setTimeout(r, 20));
+                                           accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                                              const tokenAddress = '0x19192f2059C881AF6231f0969a0DA2da9E8c09E8';
+                                            const tokenSymbol = 'Forge';
+                                            const tokenDecimals = 18;
+                                            const tokenImage = 'https://forgetoken.org/static/media/pow2.56016ef0.png';
+                                            
+                                    
+                                    try {
+                                      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+                                      const wasAdded = await ethereum.request({
+                                        method: 'wallet_watchAsset',
+                                        params: {
+                                          type: 'ERC20', // Initially only supports ERC20, but eventually more!
+                                          options: {
+                                            address: tokenAddress, // The address that the token is at.
+                                            symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+                                            decimals: tokenDecimals, // The number of decimals in the token
+                                            image: tokenImage, // A string url of the token logo
                                           },
-                                          blockExplorerUrls: ['https://polygonscan.com/'],
-                                          rpcUrls: ['https://polygon-rpc.com/'] }],
-                                        });
-                                      } catch (addError) {
-                                        // handle "add" error
-                                      }
-                                    }
-                                    // handle other "switch" errors
-                                  }		
-                                          
-                                          await new Promise(r => setTimeout(r, 20));
-                                  
-                                          
-                                    accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-                                    const tokenAddress = '0xdb922ef5384a968b6cfc0ad3d737c3b4bc838ae0';
-                                  const tokenSymbol = "FGE LP";
-                                  const tokenDecimals = 8;
-                                  const tokenImage = 'https://polygonscan.com/token/images/0xbitcoin_32.png';
-                                  
-                                  try {
-                                    // wasAdded is a boolean. Like any RPC method, an error may be thrown.
-                                    const wasAdded = await ethereum.request({
-                                      method: 'wallet_watchAsset',
-                                      params: {
-                                        type: 'ERC20', // Initially only supports ERC20, but eventually more!
-                                        options: {
-                                          address: tokenAddress, // The address that the token is at.
-                                          symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-                                          decimals: tokenDecimals, // The number of decimals in the token
-                                          image: tokenImage, // A string url of the token logo
                                         },
-                                      },
-                                    });
-                                  
-                                    if (wasAdded) {
-                                      console.log('Thanks for your interest!');
-                                    } else {
-                                      console.log('Your loss!');
-                                    }
-                                  } catch (error) {
-                                    console.log(error);
-                                  }
+                                      });
+                                    
+                                      if (wasAdded) {
+                                        console.log('Thanks for your interest!');
+                                      } else {
+                                        console.log('Your loss!');
                                       }
-                                  </script>
+                                    } catch (error) {
+                                      console.log(error);
+                                    }
+                                        }
+                                    </script>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="enableEthereumButton221 btn btn-hover color-1 glowing addedstylebutton">Add 0xBTC(Polygon) to Metamask</button>
+                                                
+                                    
+                                    <script>
+                                        
+                                    //Sending Ethereum to an address
+                                    //
+                                    const ethereumButton221 = document.querySelector('.enableEthereumButton221');
+                                    
+                                    ethereumButton221.addEventListener('click', () => {
+                                      getAccount223();
+                                    });
+                                    
+                                    
+                                    async function getAccount() {
+                                      accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                                      showAccount.innerHTML = accounts;
+                                     console.log(accounts);
+                                    }
+                                        
+                                    
+                                    async function getAccount223() {
+                                            
+                                            
+                                    try {
+                                      await ethereum.request({
+                                        method: 'wallet_switchEthereumChain',
+                                        params: [{ chainId: '0x89' }],
+                                      });
+                                    } catch (switchError) {
+                                      // This error code indicates that the chain has not been added to MetaMask.
+                                      if (switchError.code === 4902) {
+                                        try {
+                                          await ethereum.request({
+                                            method: 'wallet_addEthereumChain',
+                                            params: [{ chainId: '0x89', 
+                                            chainName: 'Polygon Mainnet',
+                                            nativeCurrency: {
+                                                name: 'MATIC',
+                                                symbol: 'MATIC', // 2-6 characters long
+                                                decimals: 18
+                                            },
+                                            blockExplorerUrls: ['https://polygonscan.com/'],
+                                            rpcUrls: ['https://polygon-rpc.com/'] }],
+                                          });
+                                        } catch (addError) {
+                                          // handle "add" error
+                                        }
+                                      }
+                                      // handle other "switch" errors
+                                    }		
+                                            
+                                            await new Promise(r => setTimeout(r, 20));
+                                    
+                                            
+                                      accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                                      const tokenAddress = '0x71b821aa52a49f32eed535fca6eb5aa130085978';
+                                    const tokenSymbol = '0xBTC';
+                                    const tokenDecimals = 8;
+                                    const tokenImage = 'https://polygonscan.com/token/images/0xbitcoin_32.png';
+                                    
+                                    try {
+                                      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+                                      const wasAdded = await ethereum.request({
+                                        method: 'wallet_watchAsset',
+                                        params: {
+                                          type: 'ERC20', // Initially only supports ERC20, but eventually more!
+                                          options: {
+                                            address: tokenAddress, // The address that the token is at.
+                                            symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+                                            decimals: tokenDecimals, // The number of decimals in the token
+                                            image: tokenImage, // A string url of the token logo
+                                          },
+                                        },
+                                      });
+                                    
+                                      if (wasAdded) {
+                                        console.log('Thanks for your interest!');
+                                      } else {
+                                        console.log('Your loss!');
+                                      }
+                                    } catch (error) {
+                                      console.log(error);
+                                    }
+                                        }
+                                    </script>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="enableEthereumButton222 btn btn-hover color-1 glowing addedstylebutton">Add Forge/0xBTC LP Tokens to Metamask</button>
+                                                
+                                            </div>
+                                            <script>
+                                                
+                                            //Sending Ethereum to an address
+                                            //
+                                            const ethereumButton222 = document.querySelector('.enableEthereumButton222');
+                                            
+                                            ethereumButton222.addEventListener('click', () => {
+                                              getAccount22();
+                                            });
+                                            
+                                            async function getAccount() {
+                                              accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                                              showAccount.innerHTML = accounts;
+                                             console.log(accounts);
+                                            }
+                                                
+                                            
+                                            async function getAccount22() {
+                                                    
+                                                    
+                                            try {
+                                              await ethereum.request({
+                                                method: 'wallet_switchEthereumChain',
+                                                params: [{ chainId: '0x89' }],
+                                              });
+                                            } catch (switchError) {
+                                              // This error code indicates that the chain has not been added to MetaMask.
+                                              if (switchError.code === 4902) {
+                                                try {
+                                                  await ethereum.request({
+                                                    method: 'wallet_addEthereumChain',
+                                                    params: [{ chainId: '0x89', 
+                                                    chainName: 'Polygon Mainnet',
+                                                    nativeCurrency: {
+                                                        name: 'MATIC',
+                                                        symbol: 'MATIC', // 2-6 characters long
+                                                        decimals: 18
+                                                    },
+                                                    blockExplorerUrls: ['https://polygonscan.com/'],
+                                                    rpcUrls: ['https://polygon-rpc.com/'] }],
+                                                  });
+                                                } catch (addError) {
+                                                  // handle "add" error
+                                                }
+                                              }
+                                              // handle other "switch" errors
+                                            }		
+                                                    
+                                                    await new Promise(r => setTimeout(r, 20));
+                                            
+                                                    
+                                              accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                                              const tokenAddress = '0xdb922ef5384a968b6cfc0ad3d737c3b4bc838ae0';
+                                            const tokenSymbol = "Frg LP";
+                                            const tokenDecimals = 18;
+                                            const tokenImage = 'https://polygonscan.com/token/images/0xbitcoin_32.png';
+                                            
+                                            try {
+                                              // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+                                              const wasAdded = await ethereum.request({
+                                                method: 'wallet_watchAsset',
+                                                params: {
+                                                  type: 'ERC20', // Initially only supports ERC20, but eventually more!
+                                                  options: {
+                                                    address: tokenAddress, // The address that the token is at.
+                                                    symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+                                                    decimals: tokenDecimals, // The number of decimals in the token
+                                                    image: tokenImage, // A string url of the token logo
+                                                  },
+                                                },
+                                              });
+                                            
+                                              if (wasAdded) {
+                                                console.log('Thanks for your interest!');
+                                              } else {
+                                                console.log('Your loss!');
+                                              }
+                                            } catch (error) {
+                                              console.log(error);
+                                            }
+                                                }
+                                            </script>
                           </li>
                       </ul>
                   
