@@ -132,10 +132,14 @@ pre {
     word-break: keep-all;
  }
 
- .btnsex{
-     background-color: black;
-     color: white;
+ .btnsex1{
+     background-color: #F1592A;
+     color: black;
  }
+ .btnsex{
+  background-color: black;
+  color: white;
+}
  .btnsex:hover{
      color: white;
      background-color: #F1592A;
