@@ -1,4 +1,4 @@
-#Forge Token Whitepaper
+# Forge Token Whitepaper
 
 Forge Token is the first 100% decentralized, 100% community owned, 100% trustless, 100% fair, 100% ownerless token 
 that uses Proof-of-Work to distribute Tokens, Rewards, and run our Auctions
