@@ -1,4 +1,4 @@
-# Forge-Main mining INFORMATION below
+# Forge-Main GPU mining INFORMATION below
 
 Please add your private key to SOLO mine!
 
@@ -7,6 +7,7 @@ All-in-one mixed multi-GPU (nVidia, AMD, Intel) & CPU miner solves proof of work
 Current latest public release version: 1.1.0
 
 Runs on Windows x64
+Download LINK: https://drive.google.com/u/0/uc?export=download&confirm=clAC&id=1XOcfFu6SsjWvfbcp3rPsuq9ovb7VONfb
 
 Built with .NET 5.0, VC++ 19.28.29914, nVidia CUDA SDK 10.2 64-bit, and AMD APP SDK v3.0.130.135 (OpenCL)
 
